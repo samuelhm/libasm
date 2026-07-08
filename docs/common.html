@@ -3,15 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Referencia Rápida — ASM x86_64</title>
+		<title>Referencia Rápida - ASM x86_64</title>
 		<link rel="stylesheet" href="register_styles.css">
 	</head>
 	<body>
-
 		<header id="header-main">
-			<h1 id="title-main">Referencia Rápida — ASM x86_64</h1>
+			<h2 id="title-main">Referencia Rápida - ASM x86_64</h2>
 		</header>
-
 		<main id="main-content">
 			<fieldset id="section-regs" class="register-section">
 				<legend id="legend-regs">Registros de Propósito General</legend>
@@ -36,14 +34,14 @@
 						<tr><td><code>RBX</code></td><td><code>EBX</code></td><td>Callee-saved para preservar valores entre llamadas.</td><td>Preservado</td></tr>
 						<tr><td><code>R10</code></td><td><code>R10D</code></td><td>4.º argumento en <strong>syscall</strong> (en ABI normal no se usa).</td><td>Volátil*</td></tr>
 						<tr><td><code>R11</code></td><td><code>R11D</code></td><td>Destruido por <code>syscall</code> (guarda <code>RFLAGS</code>).</td><td>Volátil*</td></tr>
-						<tr><td><code>R12–R15</code></td><td><code>R12D–R15D</code></td><td>Callee-saved adicionales. Variables locales persistentes. Ideales para <code>i</code>, <code>contador</code>, <code>ptr</code>, etc.</td><td>Preservado</td></tr>
+						<tr><td><code>R12-R15</code></td><td><code>R12D-R15D</code></td><td>Callee-saved adicionales. Variables locales persistentes. Ideales para <code>i</code>, <code>contador</code>, <code>ptr</code>, etc.</td><td>Preservado</td></tr>
 					</tbody>
 				</table>
 				<p class="nasm-note">
 					<strong>Volátil</strong>: la función llamada puede modificarlo, así que si quieres conservar su valor debes guardarlo en la pila (<code>push</code>) antes de llamar y restaurarlo (<code>pop</code>) después.
 				</p>
 				<p class="nasm-note">
-					<strong>Volátil*</strong>: serán siempre volátiles aunque intentes preservarlos — la función/syscall los machaca.
+					<strong>Volátil*</strong>: serán siempre volátiles aunque intentes preservarlos - la función/syscall los machaca.
 				</p>
 				<p class="nasm-note">
 					<strong>Preservado</strong>: la función llamada los guarda automáticamente según la ABI; no necesitas hacer <code>push</code>/<code>pop</code> tú mismo.
@@ -57,9 +55,9 @@
 						<tr><td><code>RIP</code></td><td>Instruction pointer: próxima instrucción a ejecutar.</td><td>Para PC-relative: <code>lea rax, [rel msg]</code>, <code>call [rel func]</code>.</td></tr>
 						<tr><td><code>RFLAGS</code></td><td>Banderas: ZF, SF, CF, OF, PF, IF, DF.</td><td>Tras <code>cmp</code>/<code>test</code> antes de un <code>jXX</code>.</td></tr>
 						<tr><td><code>CR3</code></td><td>Page table base (solo kernel). <code>0xC0000080</code> = <code>IA32_EFER</code> MSR.</td><td>No se accede desde usuario.</td></tr>
-						<tr><td><code>XMM0–XMM7</code></td><td>128 bits para <code>float</code>/<code>double</code>/<code>__m128i</code>. Argumentos y retorno en C ABI.</td><td>Cuando paso/tengo <code>float</code> o <code>double</code>.</td></tr>
-						<tr><td><code>XMM8–XMM15</code></td><td>128 bits extra (volátiles, no se usan en ABI).</td><td>SIMD local.</td></tr>
-						<tr><td><code>FS base</code></td><td>En Linux apunta al TLS del hilo actual.</td><td>Acceso a variables <code>__thread</code>.</td></tr>
+						<tr><td><code>XMM0-XMM7</code></td><td>128 bits para <code>float</code>/<code>double</code>/<code>__m128i</code>. Argumentos y retorno en C ABI.</td><td>Cuando paso/tengo <code>float</code> o <code>double</code>.</td></tr>
+						<tr><td><code>XMM8-XMM15</code></td><td>128 bits extra (volátiles, no se usan en ABI).</td><td>SIMD local.</td></tr>
+						<tr><td><code>FS base</code></td><td>En Linux apunta al TLS del hilo actual.</td><td>Acceso a variables <code>__thread</code>.</td></tr>
 					</tbody>
 				</table>
 			</fieldset>
@@ -111,31 +109,31 @@
 				<table id="table-instr">
 					<thead><tr><th>Instrucción</th><th>Qué hace</th><th>Uso típico</th></tr></thead>
 					<tbody>
-						<tr><td><code>mov dst, src</code></td><td>Copia un valor.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
-						<tr><td><code>lea dst, [mem]</code></td><td>Carga la <strong>dirección efectiva</strong>, no el contenido.</td><td><code>lea rax, [rbx+rcx*4]</code><br><code>lea rsi, [rel msg]</code></td></tr>
-						<tr><td><code>xchg a, b</code></td><td>Intercambia.</td><td><code>xchg rax, rbx</code></td></tr>
-						<tr><td><code>movzx dst, src</code></td><td>Mueve extendiendo con ceros.</td><td><code>movzx rax, al</code> (byte → qword)</td></tr>
-						<tr><td><code>push src</code> / <code>pop dst</code></td><td>Empuja/saca de la pila.</td><td><code>push rax</code><br><code>pop rbx</code></td></tr>
-						<tr><td><code>add dst, src</code> / <code>sub</code></td><td>Suma/resta.</td><td><code>add rax, rbx</code><br><code>sub rsp, 16</code></td></tr>
-						<tr><td><code>inc dst</code> / <code>dec dst</code></td><td>+1 / -1 (no afecta CF).</td><td><code>inc rcx</code><br><code>dec rax</code></td></tr>
-						<tr><td><code>imul dst, src1, src2</code></td><td>Multiplicación de 3 operandos.</td><td><code>imul rax, rbx, 10</code> (<code>rax = rbx * 10</code>)</td></tr>
-						<tr><td><code>idiv src</code></td><td>División con signo. <code>RDX:RAX / src</code>.</td><td><code>idiv rbx</code> (cociente en <code>RAX</code>, resto en <code>RDX</code>)</td></tr>
+						<tr><td><code>mov dst, src</code></td><td>Copia un valor.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
+						<tr><td><code>lea dst, [mem]</code></td><td>Carga la <strong>dirección efectiva</strong>, no el contenido.</td><td><code>lea rax, [rbx+rcx*4]</code><br><code>lea rsi, [rel msg]</code></td></tr>
+						<tr><td><code>xchg a, b</code></td><td>Intercambia.</td><td><code>xchg rax, rbx</code></td></tr>
+						<tr><td><code>movzx dst, src</code></td><td>Mueve extendiendo con ceros.</td><td><code>movzx rax, al</code> (byte → qword)</td></tr>
+						<tr><td><code>push src</code> / <code>pop dst</code></td><td>Empuja/saca de la pila.</td><td><code>push rax</code><br><code>pop rbx</code></td></tr>
+						<tr><td><code>add dst, src</code> / <code>sub</code></td><td>Suma/resta.</td><td><code>add rax, rbx</code><br><code>sub rsp, 16</code></td></tr>
+						<tr><td><code>inc dst</code> / <code>dec dst</code></td><td>+1 / -1 (no afecta CF).</td><td><code>inc rcx</code><br><code>dec rax</code></td></tr>
+						<tr><td><code>imul dst, src1, src2</code></td><td>Multiplicación de 3 operandos.</td><td><code>imul rax, rbx, 10</code> (<code>rax = rbx * 10</code>)</td></tr>
+						<tr><td><code>idiv src</code></td><td>División con signo. <code>RDX:RAX / src</code>.</td><td><code>idiv rbx</code> (cociente en <code>RAX</code>, resto en <code>RDX</code>)</td></tr>
 						<tr><td><code>cqo</code> / <code>cdq</code></td><td>Extiende signo de <code>RAX</code> a <code>RDX:RAX</code> (o <code>EAX</code> a <code>EDX:EAX</code>) antes de <code>idiv</code>.</td><td><code>cqo</code><br><code>idiv rbx</code></td></tr>
 						<tr><td><code>and</code> / <code>or</code> / <code>xor</code></td><td>AND/OR/XOR bit a bit. <code>xor rax, rax</code> = <code>rax = 0</code> (más eficiente que <code>mov rax, 0</code>).</td><td><code>xor rax, rax</code><br><code>and rax, 0x0F</code></td></tr>
 						<tr><td><code>shl</code> / <code>shr</code> / <code>sar</code></td><td>Desplazamientos. <code>shl rax, 3</code> multiplica por 8. <code>sar rax, 1</code> divide con signo.</td><td><code>shl rax, 3</code></td></tr>
-						<tr><td><code>test dst, src</code></td><td>AND sin guardar. Solo afecta flags. <code>test rax, rax</code> → ZF=1 si <code>rax=0</code>.</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
-						<tr><td><code>cmp a, b</code></td><td>Compara <code>a - b</code>, afecta flags.</td><td><code>cmp rax, rbx</code><br><code>je .iguales</code></td></tr>
-						<tr><td><code>jmp etiqueta</code></td><td>Salto incondicional.</td><td><code>jmp .bucle</code></td></tr>
+						<tr><td><code>test dst, src</code></td><td>AND sin guardar. Solo afecta flags. <code>test rax, rax</code> → ZF=1 si <code>rax=0</code>.</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
+						<tr><td><code>cmp a, b</code></td><td>Compara <code>a - b</code>, afecta flags.</td><td><code>cmp rax, rbx</code><br><code>je .iguales</code></td></tr>
+						<tr><td><code>jmp etiqueta</code></td><td>Salto incondicional.</td><td><code>jmp .bucle</code></td></tr>
 						<tr><td><code>je</code> / <code>jne</code></td><td>Salta si igual / no igual (ZF=1 / ZF=0).</td><td><code>cmp rax, 0</code><br><code>je .es_cero</code></td></tr>
 						<tr><td><code>jz</code> / <code>jnz</code></td><td>Salta si ZF=1 / ZF=0 (alias de je/jne).</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
 						<tr><td><code>jg</code> / <code>jge</code> / <code>jl</code> / <code>jle</code></td><td>Mayor/menor <strong>con signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>jg .r_mayor</code></td></tr>
 						<tr><td><code>ja</code> / <code>jae</code> / <code>jb</code> / <code>jbe</code></td><td>Mayor/menor <strong>sin signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>ja .r_mayor</code></td></tr>
-						<tr><td><code>call etiqueta</code></td><td>Salta a la función, guarda retorno en pila.</td><td><code>call mi_funcion</code></td></tr>
+						<tr><td><code>call etiqueta</code></td><td>Salta a la función, guarda retorno en pila.</td><td><code>call mi_funcion</code></td></tr>
 						<tr><td><code>ret</code></td><td>Retorna de la función.</td><td><code>ret</code></td></tr>
 						<tr><td><code>syscall</code></td><td>Llamada al sistema Linux (nº en <code>RAX</code>).</td><td><code>mov rax, 60</code><br><code>xor rdi, rdi</code><br><code>syscall</code></td></tr>
-						<tr><td><code>loop etiqueta</code></td><td><code>rcx--</code> y salta si no es cero.</td><td><code>mov rcx, 10</code><br><code>.bucle:</code><br><code>...</code><br><code>loop .bucle</code></td></tr>
+						<tr><td><code>loop etiqueta</code></td><td><code>rcx--</code> y salta si no es cero.</td><td><code>mov rcx, 10</code><br><code>.bucle:</code><br><code>...</code><br><code>loop .bucle</code></td></tr>
 						<tr><td><code>leave</code></td><td>Equivale a <code>mov rsp, rbp; pop rbp</code>.</td><td><code>leave</code><br><code>ret</code></td></tr>
-						<tr><td><code>ret n</code></td><td>Retorna y suma <code>n</code> a <code>RSP</code> (para limpiar argumentos de pila en ABI antiguos).</td><td><code>ret 8</code></td></tr>
+						<tr><td><code>ret n</code></td><td>Retorna y suma <code>n</code> a <code>RSP</code> (para limpiar argumentos de pila en ABI antiguos).</td><td><code>ret 8</code></td></tr>
 						<tr><td><code>nop</code></td><td>No hace nada. 1 byte en x86_64.</td><td>Alineación, padding, breakpoints en debug.</td></tr>
 						<tr><td><code>int3</code></td><td>Breakpoint (1 byte = <code>0xCC</code>). Lo usa el depurador.</td><td>Para pausas en debug.</td></tr>
 						<tr><td><code>cdqe</code></td><td>Extiende signo de <code>EAX</code> a <code>RAX</code>.</td><td>Tras una operación 32 bits antes de pasarla a syscall 64.</td></tr>
@@ -160,7 +158,7 @@
 					<li><strong>Olvidar <code>global _start</code></strong> → el linker no encuentra el punto de entrada.</li>
 					<li><strong>Olvidar <code>section .text</code></strong> → NASM no sabe dónde va el código.</li>
 					<li><strong>Usar <code>RCX</code> en lugar de <code>R10</code></strong> como 4º argumento de <code>syscall</code> → <code>syscall</code> destruye <code>RCX</code>.</li>
-					<li><strong>No guardar <code>RBX, RBP, R12–R15</code></strong> en una función → pierdes valores al retornar.</li>
+					<li><strong>No guardar <code>RBX, RBP, R12-R15</code></strong> en una función → pierdes valores al retornar.</li>
 					<li><strong>Desbalancear la pila</strong> (un <code>push</code> sin <code>pop</code>) → crash en el <code>ret</code>.</li>
 					<li><strong>Llamar a <code>int 0x80</code> en 64 bits</strong> → usa la convención de 32 bits (RCX en lugar de R10).</li>
 					<li><strong>Olvidar alinear la pila a 16 bytes</strong> antes de <code>call</code> → crashea si la función llamada usa SSE/AVX.</li>

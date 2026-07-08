@@ -39,7 +39,7 @@ html {
 
 body { min-height:100vh; padding:1.5rem 2rem 3rem; }
 
-#header-main { margin-bottom:2rem; }
+#header-main { margin-bottom:2rem; text-align:center; }
 #title-main {
   font-size:1.8rem; font-weight:700; color:var(--text-bright); letter-spacing:-0.02em;
 }
@@ -55,6 +55,117 @@ body { min-height:100vh; padding:1.5rem 2rem 3rem; }
   font-size:1.2rem; font-weight:700; color:var(--text-bright);
   padding:0.25rem 0.75rem; margin-left:0.5rem;
   background:var(--bg-surface); border:1px solid var(--border); border-radius:6px;
+}
+
+/* ============================================================
+   Tabs (index) - estilo moderno
+   ============================================================ */
+#tab-nav {
+	display:flex;
+	gap:0.4rem;
+	width:100%;
+	margin:0 0 0;
+	padding:0.4rem 0.4rem 0;
+	background:linear-gradient(180deg, rgba(22,27,34,0.6) 0%, rgba(22,27,34,0.2) 100%);
+	border-bottom:1px solid var(--border);
+	position:relative;
+}
+.tab-btn {
+	position:relative;
+	flex:1 1 0;
+	padding:0.75rem 1.25rem;
+	background:transparent;
+	border:1px solid transparent;
+	border-bottom:none;
+	border-radius:10px 10px 0 0;
+	color:var(--text-muted);
+	font-family:inherit;
+	font-size:0.82rem;
+	font-weight:600;
+	letter-spacing:0.03em;
+	cursor:pointer;
+	transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	z-index:1;
+}
+.tab-btn::before {
+	content:"";
+	position:absolute;
+	left:50%;
+	bottom:0;
+	width:0;
+	height:2px;
+	background:linear-gradient(90deg, var(--color-64), #58a6ff);
+	transform:translateX(-50%);
+	transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	border-radius:2px;
+}
+.tab-btn:hover {
+	background:rgba(31,111,235,0.08);
+	color:var(--text-primary);
+	transform:translateY(-1px);
+}
+.tab-btn:hover::before {
+	width:40%;
+}
+.tab-btn.active {
+	background:linear-gradient(180deg, rgba(31,111,235,0.15) 0%, rgba(31,111,235,0.05) 100%);
+	border-color:var(--border);
+	border-bottom-color:var(--bg-primary);
+	color:var(--text-bright);
+	transform:translateY(0);
+	box-shadow:0 -2px 8px rgba(0,0,0,0.2);
+}
+.tab-btn.active::before {
+	width:60%;
+	height:3px;
+	background:linear-gradient(90deg, var(--color-64), #58a6ff);
+	box-shadow:0 0 8px rgba(31,111,235,0.6);
+}
+.tab-btn:focus-visible {
+	outline:2px solid var(--color-64);
+	outline-offset:-2px;
+}
+#tab-content {
+	width:100%;
+	padding:1.5rem 0 0;
+	animation:fadeIn 0.35s ease-out;
+}
+@keyframes fadeIn {
+	from { opacity:0; transform:translateY(6px); }
+	to   { opacity:1; transform:translateY(0); }
+}
+#tab-content > header { display:none; }
+.tab-loading, .tab-error {
+	padding:3rem 2rem;
+	text-align:center;
+	color:var(--text-muted);
+	font-size:0.9rem;
+	background:var(--bg-surface);
+	border:1px solid var(--border);
+	border-radius:8px;
+	margin:1rem 0;
+}
+.tab-loading::before {
+	content:"";
+	display:inline-block;
+	width:14px;
+	height:14px;
+	margin-right:0.6rem;
+	border:2px solid var(--border);
+	border-top-color:var(--color-64);
+	border-radius:50%;
+	vertical-align:middle;
+	animation:spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.tab-error { color:#f85149; border-color:rgba(248,81,73,0.3); }
+.tab-error::before { content:"⚠ "; }
+@media (max-width:700px) {
+	.tab-btn { font-size:0.7rem; padding:0.65rem 0.5rem; }
+	#tab-nav { gap:0.2rem; padding:0.3rem 0.3rem 0; }
 }
 
 /* ============================================================

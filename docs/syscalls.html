@@ -3,14 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Syscalls Linux — x86_64</title>
+		<title>Syscalls Linux - x86_64</title>
 		<link rel="stylesheet" href="register_styles.css">
 	</head>
 	<body>
 		<header id="header-main">
-			<h1 id="title-main">Syscalls Linux — x86_64</h1>
+			<h2 id="title-main">Syscalls Linux - x86_64</h2>
 		</header>
-
 		<main id="main-content">
 			<fieldset id="section-essential" class="register-section">
 				<legend id="legend-essential">Syscalls Esenciales</legend>
@@ -53,7 +52,7 @@
 						<tr id="sys-49"><td>49</td><td>bind</td><td style="font-size:0.78rem"><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td style="font-size:0.78rem"><code>RAX</code>=0 o -errno</td><td>Asocia un socket a una dirección local.</td></tr>
 						<tr id="sys-50"><td>50</td><td>listen</td><td style="font-size:0.78rem"><code>RDI</code>=fd, <code>RSI</code>=backlog</td><td style="font-size:0.78rem"><code>RAX</code>=0 o -errno</td><td>Marca un socket como pasivo para aceptar conexiones.</td></tr>
 						<tr id="sys-56"><td>56</td><td>clone</td><td style="font-size:0.78rem"><code>RDI</code>=flags, <code>RSI</code>=child_stack, <code>RDX</code>=ptid, <code>R10</code>=ctid, <code>R8</code>=tls</td><td style="font-size:0.78rem"><code>RAX</code>=pid del hijo o -errno</td><td>Crea un nuevo proceso/hilo con control fino sobre qué se comparte.</td></tr>
-						<tr id="sys-57"><td>57</td><td>fork</td><td style="font-size:0.78rem">(sin args)</td><td style="font-size:0.78rem"><code>RAX</code>=0 (hijo) o pid&gt;0 (padre) o -errno</td><td>Clona el proceso actual. Hijo idéntico con PID distinto.</td></tr>
+						<tr id="sys-57"><td>57</td><td>fork</td><td style="font-size:0.78rem">(sin args)</td><td style="font-size:0.78rem"><code>RAX</code>=0 (hijo) o pid>0 (padre) o -errno</td><td>Clona el proceso actual. Hijo idéntico con PID distinto.</td></tr>
 						<tr id="sys-59"><td>59</td><td>execve</td><td style="font-size:0.78rem"><code>RDI</code>=path, <code>RSI</code>=argv, <code>RDX</code>=envp</td><td style="font-size:0.78rem"><code>RAX</code>=-errno (solo si falla)</td><td>Reemplaza el proceso actual con un nuevo programa.</td></tr>
 						<tr id="sys-60"><td>60</td><td>exit</td><td style="font-size:0.78rem"><code>RDI</code>=status</td><td style="font-size:0.78rem">NO retorna</td><td>Termina el proceso actual. Solo el hilo llamador termina.</td></tr>
 						<tr id="sys-61"><td>61</td><td>wait4</td><td style="font-size:0.78rem"><code>RDI</code>=pid, <code>RSI</code>=wstatus, <code>RDX</code>=options, <code>R10</code>=rusage</td><td style="font-size:0.78rem"><code>RAX</code>=pid del hijo o -errno</td><td>Espera a que un hijo cambie de estado.</td></tr>
@@ -278,7 +277,7 @@
 				</table>
 			</fieldset>
 			<fieldset id="section-net" class="register-section">
-				<legend id="legend-net">Red – Sockets</legend>
+				<legend id="legend-net">Red - Sockets</legend>
 				<table id="table-net">
 					<thead><tr><th>#</th><th>Nombre</th><th>Argumentos</th><th>Retorno</th><th>Descripción</th></tr></thead>
 					<tbody>

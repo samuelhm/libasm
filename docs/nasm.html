@@ -3,13 +3,12 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>NASM Intel — Sintaxis para Linux x86_64</title>
+		<title>NASM Intel - Sintaxis para Linux x86_64</title>
 		<link rel="stylesheet" href="register_styles.css">
 	</head>
 	<body>
-
 		<header id="header-main">
-			<h1 id="title-main">NASM Intel — Sintaxis para Linux x86_64</h1>
+			<h2 id="title-main">NASM Intel - Sintaxis para Linux x86_64</h2>
 		</header>
 		<main id="main-content">
 			<fieldset id="section-intro" class="register-section">
@@ -22,60 +21,56 @@ $ ld archivo.o -o programa
 $ ./programa
 </code>
 </pre>
-
-				<p style="margin-top:0.5rem"><strong>Intel vs AT&amp;T</strong>:</p>
-				<pre><code><span class="cm">; Sintaxis Intel (NASM) — destino primero</span>
+				<p style="margin-top:0.5rem"><strong>Intel vs AT&T</strong>:</p>
+<pre>
+<code><span class="cm">; Sintaxis Intel (NASM) - destino primero</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">42</span>
 <span class="kw">add</span> <span class="reg">rax</span>, <span class="reg">rbx</span>
-
-<span class="cm">; Sintaxis AT&T (GAS) — origen primero, sufijos de tamaño</span>
+<span class="cm">; Sintaxis AT&T (GAS) - origen primero, sufijos de tamaño</span>
 <span class="cm">; movq $42, %rax</span>
-<span class="cm">; addq %rbx, %rax</span></code></pre>
-
+<span class="cm">; addq %rbx, %rax</span></code>
+</pre>
 				<p style="margin-top:0.5rem"><strong>Comentarios</strong>: punto y coma <code>;</code> hasta fin de línea.</p>
 				<p style="margin-top:0.5rem"><strong>Literales numéricos</strong>:</p>
-				<pre><code><span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">100</span>           <span class="cm">; decimal</span>
+<pre>
+<code><span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">100</span>           <span class="cm">; decimal</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">0x100</span>          <span class="cm">; hexadecimal</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">100b</span>           <span class="cm">; binario (NASM)</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">0100o</span>          <span class="cm">; octal</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">`'a`</span>           <span class="cm">; carácter ASCII</span>
-<span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">`Hola`</span>         <span class="cm">; cadena de 4 bytes en little-endian</span></code></pre>
-
+<span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">`Hola`</span>         <span class="cm">; cadena de 4 bytes en little-endian</span></code>
+</pre>
 				<p style="margin-top:0.5rem"><strong>Tamaños de operandos</strong>: NASM detecta el tamaño por el nombre del registro o por los especificadores <code>BYTE</code>, <code>WORD</code>, <code>DWORD</code> o <code>QWORD</code>.</p>
-				<pre><code><span class="kw">mov</span> <span class="reg">al</span>, <span class="num">10</span>              <span class="cm">; 8 bits (registro AL)</span>
+<pre>
+<code><span class="kw">mov</span> <span class="reg">al</span>, <span class="num">10</span>              <span class="cm">; 8 bits (registro AL)</span>
 <span class="kw">mov</span> <span class="reg">ax</span>, <span class="num">10</span>              <span class="cm">; 16 bits (registro AX)</span>
 <span class="kw">mov</span> <span class="reg">eax</span>, <span class="num">10</span>             <span class="cm">; 32 bits (registro EAX)</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">10</span>             <span class="cm">; 64 bits (registro RAX)</span>
 <span class="kw">mov</span> <span class="kw">BYTE</span>  [<span class="reg">rbx</span>], <span class="num">10</span>        <span class="cm">; forzar 8 bits en memoria</span>
-<span class="kw">mov</span> <span class="kw">DWORD</span> [<span class="reg">rbx</span>], <span class="num">10</span>       <span class="cm">; forzar 32 bits en memoria</span></code></pre>
-
+<span class="kw">mov</span> <span class="kw">DWORD</span> [<span class="reg">rbx</span>], <span class="num">10</span>       <span class="cm">; forzar 32 bits en memoria</span></code>
+</pre>
 				<p style="margin-top:0.5rem"><strong>Direccionamiento de memoria</strong>: siempre con corchetes <code>[ ]</code>.</p>
-				<pre><code><span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span>]                <span class="cm">; [rbx]</span>
+<pre>
+<code><span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span>]                <span class="cm">; [rbx]</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span> + <span class="num">8</span>]            <span class="cm">; [rbx+8], desplazamiento</span>
 <span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span> + <span class="reg">rcx</span>*<span class="num">4</span>]         <span class="cm">; [rbx+rcx*4], escalado</span>
-<span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span> + <span class="reg">rcx</span>*<span class="num">8</span> + <span class="num">16</span>]    <span class="cm">; base + índice*escala + desplazamiento</span></code></pre>
-
+<span class="kw">mov</span> <span class="reg">rax</span>, [<span class="reg">rbx</span> + <span class="reg">rcx</span>*<span class="num">8</span> + <span class="num">16</span>]    <span class="cm">; base + índice*escala + desplazamiento</span></code>
+</pre>
 				<p style="margin-top:0.5rem"><strong>Símbolos especiales</strong>:</p>
 				<ul style="padding-left:1.5rem;line-height:1.8">
-					<li><code>$</code> — dirección de la línea actual</li>
-					<li><code>$$</code> — dirección de inicio de la sección actual</li>
-					<li><code>$ + n</code> — desplazamiento desde línea actual</li>
+					<li><code>$</code> - dirección de la línea actual</li>
+					<li><code>$$</code> - dirección de inicio de la sección actual</li>
+					<li><code>$ + n</code> - desplazamiento desde línea actual</li>
 				</ul>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 2: Directivas de Sección y Estructura
-			============================================================ -->
 			<fieldset id="section-section" class="register-section">
 				<legend id="legend-section">Directivas de Sección y Estructura</legend>
-
 				<p class="nasm-note">Estas palabras le dicen a NASM cómo organizar el archivo objeto para que el enlazador (<code>ld</code>) y el kernel de Linux sepan qué va en cada sitio.</p>
-
 				<table id="table-section">
 					<thead><tr><th>Directiva</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
 						<tr><td><code>section</code> / <code>segment</code></td><td>Declara el inicio de una sección. Tipos principales: <code>.text</code> (código), <code>.data</code> (datos inicializados), <code>.bss</code> (datos sin inicializar), <code>.rodata</code> (datos de solo lectura). En ELF64 con <code>nasm -f elf64</code> se usa la sintaxis <code>section .text</code>.</td><td><code>section .text</code><br><code>section .data</code><br><code>section .bss</code></td></tr>
-						<tr><td><code>global</code> / <code>global _start</code></td><td>Hace una etiqueta visible para el enlazador. Para programas Linux de 64 bits sin libc, el punto de entrada es <code>_start</code> (lo busca <code>ld</code>).</td><td><code>global _start</code><br><code>global main</code></td></tr>
+						<tr><td><code>global</code> / <code>global _start</code></td><td>Hace una etiqueta visible para el enlazador. Para programas Linux de 64 bits sin libc, el punto de entrada es <code>_start</code> (lo busca <code>ld</code>).</td><td><code>global _start</code><br><code>global main</code></td></tr>
 						<tr><td><code>extern</code></td><td>Declara que un símbolo se encuentra en otro archivo o biblioteca (lo resuelve el enlazador). Para libc, hay que usar <code>extern printf</code> y enlazar con <code>gcc archivo.o -o prog</code> en lugar de <code>ld</code>.</td><td><code>extern printf</code><br><code>extern exit</code></td></tr>
 						<tr><td><code>equ</code></td><td>Define una constante en tiempo de compilación. No ocupa espacio en memoria RAM.</td><td><code>LIMIT equ 100</code><br><code>BUFSIZE equ 1024</code><br><code>SYSCALL_WRITE equ 1</code></td></tr>
 						<tr><td><code>%define</code></td><td>Macro simple del preprocesador (similar a <code>#define</code> de C). Admite redefinición sin error.</td><td><code>%define NULL 0</code><br><code>%define STDOUT 1</code></td></tr>
@@ -83,7 +78,6 @@ $ ./programa
 					</tbody>
 				</table>
 				<p class="nasm-section">Secciones que uso al programar (lo demás lo genera el enlazador, no me preocupo):</p>
-
 				<table>
 					<thead><tr><th>Sección</th><th>Descripción</th></tr></thead>
 					<tbody>
@@ -94,8 +88,9 @@ $ ./programa
 					</tbody>
 				</table>
 				<p class="nasm-section">Layout típico en memoria de un ejecutable ELF64 Linux:</p>
-				<pre><code><span class="cm">; Direcciones virtuales altas (0x7fff...)</span>
-<span class="cm">;    [stack]  -&gt;  crece hacia abajo (RSP)</span>
+<pre>
+<code><span class="cm">; Direcciones virtuales altas (0x7fff...)</span>
+<span class="cm">;    [stack]  ->  crece hacia abajo (RSP)</span>
 <span class="cm">;</span>
 <span class="cm">;    [vsyscall/vDSO]</span>
 <span class="cm">;    [mmap, brk]</span>
@@ -107,22 +102,19 @@ $ ./programa
 <span class="cm">;    [.rodata]    - constantes, solo lectura</span>
 <span class="cm">;    [.data]      - variables inicializadas, lectura/escritura</span>
 <span class="cm">;    [.bss]       - variables sin inicializar, lectura/escritura (0)</span>
-<span class="cm">;    [heap]  -&gt;  crece hacia arriba (brk/mmap)</span></code></pre>
-
+<span class="cm">;    [heap]  ->  crece hacia arriba (brk/mmap)</span></code>
+</pre>
 				<p class="nasm-section">Ver las secciones de un binario con <code>readelf</code>:</p>
-				<pre><code>$ readelf -S programa              <span class="cm">; muestra todas las secciones</span>
+<pre>
+<code>$ readelf -S programa              <span class="cm">; muestra todas las secciones</span>
 $ readelf -l programa              <span class="cm">; muestra los segmentos (program headers)</span>
 $ objdump -h programa              <span class="cm">; muestra secciones con tamaños</span>
 $ size programa                    <span class="cm">; tamaño de .text, .data, .bss</span>
-$ nm programa                      <span class="cm">; lista símbolos de .symtab</span></code></pre>
+$ nm programa                      <span class="cm">; lista símbolos de .symtab</span></code>
+</pre>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 3: Directivas de Datos
-			============================================================ -->
 			<fieldset id="section-data" class="register-section">
 				<legend id="legend-data">Directivas de Datos</legend>
-
 				<table id="table-data">
 					<thead><tr><th>Directiva</th><th>Tamaño</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
@@ -142,32 +134,25 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 						<tr><td><code>org</code></td><td>dirección</td><td>Establece la dirección de ensamblado (para direccionamiento absoluto; raramente usado en x86_64 plano).</td><td><code>org 0x7C00</code> (sectores de arranque MBR)</td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Ejemplo de uso de directivas de datos:</p>
-				<pre><code><span class="kw">section</span> .data
+<pre>
+<code><span class="kw">section</span> .data
     <span class="lab">msg</span>    <span class="kw">db</span> <span class="str">"Hola, mundo"</span>, <span class="num">10</span>     <span class="cm">; cadena + salto de l\u00ednea (ASCII 10)</span>
     <span class="lab">msglen</span> <span class="kw">equ</span> $ - msg             <span class="cm">; longitud de msg (12 bytes)</span>
     <span class="lab">nums</span>   <span class="kw">dd</span> <span class="num">100</span>, <span class="num">200</span>, <span class="num">300</span>           <span class="cm">; array de 3 dword</span>
     <span class="lab">big</span>    <span class="kw">dq</span> <span class="num">0x0080402001000080</span>    <span class="cm">; qword 64 bits (little-endian)</span>
-
 <span class="cm">; Little-endian: 0x0080402001000080 se almacena en memoria como</span>
 <span class="cm">; bytes 80 00 00 01 00 20 40 80  (el byte menos significativo primero)</span>
-
 <span class="kw">section</span> .bss
     <span class="lab">buffer</span>  <span class="kw">resb</span> <span class="num">1024</span>              <span class="cm">; 1024 bytes sin inicializar</span>
     <span class="lab">tabla</span>  <span class="kw">resq</span> <span class="num">100</span>                <span class="cm">; 100 quadwords (800 bytes)</span>
     <span class="lab">contador</span> <span class="kw">resd</span> <span class="num">1</span>                 <span class="cm">; 1 dword (4 bytes)</span>
-
 <span class="kw">section</span> .rodata
-    <span class="lab">fmt</span>    <span class="kw">db</span> <span class="str">"Resultado: %d"</span>, <span class="num">10</span>, <span class="num">0</span>   <span class="cm">; solo lectura (en .rodata)</span></code></pre>
+    <span class="lab">fmt</span>    <span class="kw">db</span> <span class="str">"Resultado: %d"</span>, <span class="num">10</span>, <span class="num">0</span>   <span class="cm">; solo lectura (en .rodata)</span></code>
+</pre>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 4: Preprocesador y Macros
-			============================================================ -->
 			<fieldset id="section-prep" class="register-section">
 				<legend id="legend-prep">Preprocesador y Macros</legend>
-
 				<table id="table-prep">
 					<thead><tr><th>Directiva</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
@@ -176,16 +161,16 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 						<tr><td><code>%xdefine</code></td><td>Como <code>%define</code> pero expande las macros dentro de la definición.</td><td><code>%xdefine DOUBLE n*2</code></td></tr>
 						<tr><td><code>%assign</code></td><td>Define una variable numérica del preprocesador (puede reasignarse).</td><td><code>%assign i 0</code><br><code>%assign i i+1</code></td></tr>
 						<tr><td><code>%macro</code> / <code>%endmacro</code></td><td>Define una macro multi-línea. Recibe parámetros separados por espacios (<code>%1</code>, <code>%2</code>, …).</td><td><code>%macro print_str 1</code><br><code>    mov rax, 1</code><br><code>    mov rsi, %1</code><br><code>    syscall</code><br><code>%endmacro</code></td></tr>
-						<tr><td><code>%if</code> / <code>%elif</code> / <code>%else</code> / <code>%endif</code></td><td>Compilación condicional (como <code>#if</code> de C).</td><td><code>%if BUFSIZE &gt; 1024</code><br><code>    %error "demasiado grande"</code><br><code>%endif</code></td></tr>
+						<tr><td><code>%if</code> / <code>%elif</code> / <code>%else</code> / <code>%endif</code></td><td>Compilación condicional (como <code>#if</code> de C).</td><td><code>%if BUFSIZE > 1024</code><br><code>    %error "demasiado grande"</code><br><code>%endif</code></td></tr>
 						<tr><td><code>%rep</code> / <code>%endrep</code></td><td>Repite un bloque N veces.</td><td><code>%rep 100</code><br><code>    nop</code><br><code>%endrep</code></td></tr>
 						<tr><td><code>%str</code> / <code>%strlen</code></td><td>Convierte un número a cadena / longitud de cadena (en tiempo de preprocesado).</td><td><code>%strlen mi_cadena</code></td></tr>
 						<tr><td><code>%include</code></td><td>Igual que en C, incluye otro archivo fuente.</td><td><code>%include "file.asm"</code></td></tr>
 						<tr><td><code>__FILE__</code>, <code>__LINE__</code></td><td>Macros predefinidas con el nombre del archivo y número de línea actual.</td><td><code>%error "Error en l\u00ednea" __LINE__</code></td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Ejemplo de macros multi-línea:</p>
-				<pre><code><span class="cm">; Macro para imprimir una cadena por syscall write</span>
+<pre>
+<code><span class="cm">; Macro para imprimir una cadena por syscall write</span>
 <span class="dir">%macro</span> print_str <span class="num">1</span>
     <span class="kw">mov</span> <span class="reg">rax</span>, <span class="num">1</span>              <span class="cm">; syscall write</span>
     <span class="kw">mov</span> <span class="reg">rdi</span>, <span class="num">1</span>              <span class="cm">; stdout</span>
@@ -193,30 +178,25 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
     <span class="kw">mov</span> <span class="reg">rdx</span>, <span class="num">8</span>              <span class="cm">; longitud (s\u00f3lo un ejemplo)</span>
     <span class="kw">syscall</span>
 <span class="dir">%endmacro</span>
-
 <span class="cm">; Uso:</span>
 <span class="kw">section</span> .data
     <span class="lab">saludo</span> <span class="kw">db</span> <span class="str">"Hola"</span>, <span class="num">10</span>
 <span class="kw">section</span> .text
-    <span class="kw">print_str</span> saludo</code></pre>
+    <span class="kw">print_str</span> saludo</code>
+</pre>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 5: Instrucciones de Movimiento
-			============================================================ -->
 			<fieldset id="section-mov" class="register-section">
 				<legend id="legend-mov">Instrucciones de Movimiento de Datos</legend>
-
 				<table id="table-mov">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>mov dst, src</code></td><td>Copia un valor de <code>src</code> a <code>dst</code>. No afecta flags.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
-						<tr><td><code>movzx dst, src</code></td><td>Mueve con <strong>extensión por ceros</strong> (zero-extend). Para <code>8→16/32/64</code> o <code>16→32/64</code>.</td><td><code>movzx rax, al</code><br><code>movzx ebx, ax</code></td></tr>
-						<tr><td><code>movsx dst, src</code></td><td>Mueve con <strong>extensión por signo</strong> (sign-extend).</td><td><code>movsx rax, al</code></td></tr>
-						<tr><td><code>movsxd dst, src</code></td><td>Extensión por signo, 32→64 bits.</td><td><code>movsxd rdi, edi</code></td></tr>
-						<tr><td><code>lea dst, [mem]</code></td><td>Carga la <strong>dirección efectiva</strong> (no el contenido).</td><td><code>lea rax, [rbx+rcx*4]</code></td></tr>
-						<tr><td><code>xchg a, b</code></td><td>Intercambia los valores de <code>a</code> y <code>b</code>.</td><td><code>xchg rax, rbx</code></td></tr>
-						<tr><td><code>cmovXX dst, src</code></td><td>Mueve condicionalmente (según flags). <code>XX</code> es una condición: <code>ne</code>, <code>z</code>, <code>ge</code>, <code>le</code>, <code>g</code>, <code>l</code>, <code>a</code>, <code>b</code>, etc.</td><td><code>cmovz rax, rbx</code> (mueve si ZF=1)</td></tr>
+						<tr><td><code>mov dst, src</code></td><td>Copia un valor de <code>src</code> a <code>dst</code>. No afecta flags.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
+						<tr><td><code>movzx dst, src</code></td><td>Mueve con <strong>extensión por ceros</strong> (zero-extend). Para <code>8→16/32/64</code> o <code>16→32/64</code>.</td><td><code>movzx rax, al</code><br><code>movzx ebx, ax</code></td></tr>
+						<tr><td><code>movsx dst, src</code></td><td>Mueve con <strong>extensión por signo</strong> (sign-extend).</td><td><code>movsx rax, al</code></td></tr>
+						<tr><td><code>movsxd dst, src</code></td><td>Extensión por signo, 32→64 bits.</td><td><code>movsxd rdi, edi</code></td></tr>
+						<tr><td><code>lea dst, [mem]</code></td><td>Carga la <strong>dirección efectiva</strong> (no el contenido).</td><td><code>lea rax, [rbx+rcx*4]</code></td></tr>
+						<tr><td><code>xchg a, b</code></td><td>Intercambia los valores de <code>a</code> y <code>b</code>.</td><td><code>xchg rax, rbx</code></td></tr>
+						<tr><td><code>cmovXX dst, src</code></td><td>Mueve condicionalmente (según flags). <code>XX</code> es una condición: <code>ne</code>, <code>z</code>, <code>ge</code>, <code>le</code>, <code>g</code>, <code>l</code>, <code>a</code>, <code>b</code>, etc.</td><td><code>cmovz rax, rbx</code> (mueve si ZF=1)</td></tr>
 						<tr><td><code>movsb</code></td><td>Mueve byte de <code>[RSI]</code> a <code>[RDI]</code> (instrucción de cadena).</td><td><code>movsb</code></td></tr>
 						<tr><td><code>movsw</code> / <code>movsd</code> / <code>movsq</code></td><td>Variantes para word (2B), dword (4B), qword (8B).</td><td><code>movsq</code></td></tr>
 						<tr><td><code>stosb/stosw/stosd/stosq</code></td><td>Almacena <code>AL/AX/EAX/RAX</code> en <code>[RDI]</code>.</td><td><code>stosb</code></td></tr>
@@ -224,29 +204,24 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 					</tbody>
 				</table>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 6: Instrucciones Aritméticas
-			============================================================ -->
 			<fieldset id="section-arith" class="register-section">
 				<legend id="legend-arith">Instrucciones Aritméticas</legend>
-
 				<table id="table-arith">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>add dst, src</code></td><td>Suma: <code>dst = dst + src</code>. Flags: OF, SF, ZF, AF, CF, PF.</td><td><code>add rax, rbx</code></td></tr>
-						<tr><td><code>sub dst, src</code></td><td>Resta: <code>dst = dst - src</code>.</td><td><code>sub rsp, 16</code></td></tr>
-						<tr><td><code>adc dst, src</code></td><td>Suma con acarreo: <code>dst = dst + src + CF</code>. Para aritmética de más de 64 bits.</td><td><code>adc rdx, rcx</code></td></tr>
-						<tr><td><code>sbb dst, src</code></td><td>Resta con acarreo: <code>dst = dst - src - CF</code>.</td><td><code>sbb rax, rbx</code></td></tr>
-						<tr><td><code>inc dst</code></td><td>Incrementa en 1 (no afecta CF).</td><td><code>inc rax</code></td></tr>
-						<tr><td><code>dec dst</code></td><td>Decrementa en 1 (no afecta CF).</td><td><code>dec rcx</code></td></tr>
-						<tr><td><code>neg dst</code></td><td>Niega (complemento a 2): <code>dst = -dst</code>.</td><td><code>neg rax</code></td></tr>
-						<tr><td><code>mul src</code></td><td>Multiplicación <strong>sin signo</strong>: <code>RAX = RAX * src</code> (8/16/32/64 bits). Resultado de doble ancho en <code>RDX:RAX</code>.</td><td><code>mul rbx</code></td></tr>
-						<tr><td><code>imul src</code></td><td>Multiplicación <strong>con signo</strong>.</td><td><code>imul rbx</code></td></tr>
-						<tr><td><code>imul dst, src</code></td><td>Multiplica <code>dst * src</code>, resultado en <code>dst</code> (mismo tamaño).</td><td><code>imul rax, rbx</code></td></tr>
-						<tr><td><code>imul dst, src1, src2</code></td><td><code>dst = src1 * src2</code>.</td><td><code>imul rax, rbx, 10</code></td></tr>
-						<tr><td><code>div src</code></td><td>División <strong>sin signo</strong>: divide <code>RDX:RAX</code> por <code>src</code>. Cociente en <code>RAX</code>, resto en <code>RDX</code>.</td><td><code>div rbx</code></td></tr>
-						<tr><td><code>idiv src</code></td><td>División <strong>con signo</strong>.</td><td><code>idiv rbx</code></td></tr>
+						<tr><td><code>add dst, src</code></td><td>Suma: <code>dst = dst + src</code>. Flags: OF, SF, ZF, AF, CF, PF.</td><td><code>add rax, rbx</code></td></tr>
+						<tr><td><code>sub dst, src</code></td><td>Resta: <code>dst = dst - src</code>.</td><td><code>sub rsp, 16</code></td></tr>
+						<tr><td><code>adc dst, src</code></td><td>Suma con acarreo: <code>dst = dst + src + CF</code>. Para aritmética de más de 64 bits.</td><td><code>adc rdx, rcx</code></td></tr>
+						<tr><td><code>sbb dst, src</code></td><td>Resta con acarreo: <code>dst = dst - src - CF</code>.</td><td><code>sbb rax, rbx</code></td></tr>
+						<tr><td><code>inc dst</code></td><td>Incrementa en 1 (no afecta CF).</td><td><code>inc rax</code></td></tr>
+						<tr><td><code>dec dst</code></td><td>Decrementa en 1 (no afecta CF).</td><td><code>dec rcx</code></td></tr>
+						<tr><td><code>neg dst</code></td><td>Niega (complemento a 2): <code>dst = -dst</code>.</td><td><code>neg rax</code></td></tr>
+						<tr><td><code>mul src</code></td><td>Multiplicación <strong>sin signo</strong>: <code>RAX = RAX * src</code> (8/16/32/64 bits). Resultado de doble ancho en <code>RDX:RAX</code>.</td><td><code>mul rbx</code></td></tr>
+						<tr><td><code>imul src</code></td><td>Multiplicación <strong>con signo</strong>.</td><td><code>imul rbx</code></td></tr>
+						<tr><td><code>imul dst, src</code></td><td>Multiplica <code>dst * src</code>, resultado en <code>dst</code> (mismo tamaño).</td><td><code>imul rax, rbx</code></td></tr>
+						<tr><td><code>imul dst, src1, src2</code></td><td><code>dst = src1 * src2</code>.</td><td><code>imul rax, rbx, 10</code></td></tr>
+						<tr><td><code>div src</code></td><td>División <strong>sin signo</strong>: divide <code>RDX:RAX</code> por <code>src</code>. Cociente en <code>RAX</code>, resto en <code>RDX</code>.</td><td><code>div rbx</code></td></tr>
+						<tr><td><code>idiv src</code></td><td>División <strong>con signo</strong>.</td><td><code>idiv rbx</code></td></tr>
 						<tr><td><code>cdq</code></td><td>Extiende el signo de <code>EAX</code> a <code>EDX:EAX</code> (32 bits).</td><td><code>cdq</code></td></tr>
 						<tr><td><code>cqo</code></td><td>Extiende el signo de <code>RAX</code> a <code>RDX:RAX</code> (64 bits).</td><td><code>cqo</code></td></tr>
 						<tr><td><code>cdqe</code></td><td>Extiende el signo de <code>EAX</code> a <code>RAX</code>.</td><td><code>cdqe</code></td></tr>
@@ -254,85 +229,70 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 					</tbody>
 				</table>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 7: Instrucciones Lógicas y de Bits
-			============================================================ -->
 			<fieldset id="section-logic" class="register-section">
 				<legend id="legend-logic">Instrucciones Lógicas y de Bits</legend>
-
 				<table id="table-logic">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>and dst, src</code></td><td>AND bit a bit. Flags: OF=CF=0, SF, ZF, PF.</td><td><code>and rax, 0x0F</code> (máscara de 4 bits bajos)</td></tr>
-						<tr><td><code>or dst, src</code></td><td>OR bit a bit.</td><td><code>or rax, 1</code> (setear bit 0)</td></tr>
-						<tr><td><code>xor dst, src</code></td><td>XOR bit a bit. <code>xor rax, rax</code> pone <code>rax = 0</code> de forma eficiente.</td><td><code>xor rax, rax</code></td></tr>
-						<tr><td><code>not dst</code></td><td>NOT bit a bit (invierte todos los bits).</td><td><code>not rax</code></td></tr>
-						<tr><td><code>test dst, src</code></td><td>AND sin guardar resultado. Solo afecta flags. Equivale a <code>cmp</code> contra 0.</td><td><code>test al, al</code> (verifica si AL es 0)</td></tr>
-						<tr><td><code>shl dst, n</code></td><td>Desplazamiento lógico a la izquierda (equivale a <code>sal</code>).</td><td><code>shl rax, 3</code> (multiplica por 8)</td></tr>
-						<tr><td><code>shr dst, n</code></td><td>Desplazamiento lógico a la derecha (rellena con 0).</td><td><code>shr rax, 1</code> (divide por 2 sin signo)</td></tr>
-						<tr><td><code>sal dst, n</code></td><td>Desplazamiento aritmético a la izquierda (idéntico a <code>shl</code>).</td><td><code>sal rax, 1</code></td></tr>
-						<tr><td><code>sar dst, n</code></td><td>Desplazamiento aritmético a la derecha (rellena con bit de signo).</td><td><code>sar rax, 1</code> (divide por 2 con signo)</td></tr>
-						<tr><td><code>rol dst, n</code></td><td>Rotación a la izquierda.</td><td><code>rol rax, 8</code></td></tr>
-						<tr><td><code>ror dst, n</code></td><td>Rotación a la derecha.</td><td><code>ror rax, 8</code></td></tr>
-						<tr><td><code>rcl dst, n</code></td><td>Rotación a la izquierda con CF.</td><td><code>rcl rax, 1</code></td></tr>
-						<tr><td><code>rcr dst, n</code></td><td>Rotación a la derecha con CF.</td><td><code>rcr rax, 1</code></td></tr>
-						<tr><td><code>bt base, idx</code></td><td>Test bit: <code>CF = bit idx de base</code>.</td><td><code>bt rax, 5</code></td></tr>
-						<tr><td><code>bts base, idx</code></td><td>Test and set.</td><td><code>bts [rbx], 3</code></td></tr>
-						<tr><td><code>btr base, idx</code></td><td>Test and reset.</td><td><code>btr rax, 7</code></td></tr>
-						<tr><td><code>btc base, idx</code></td><td>Test and complement.</td><td><code>btc rax, 9</code></td></tr>
-						<tr><td><code>bsf dst, src</code></td><td>Bit scan forward: encuentra el primer bit a 1 (hacia el LSB).</td><td><code>bsf rax, rbx</code></td></tr>
-						<tr><td><code>bsr dst, src</code></td><td>Bit scan reverse: primer bit a 1 hacia el MSB.</td><td><code>bsr rax, rbx</code></td></tr>
-						<tr><td><code>popcnt dst, src</code></td><td>Cuenta bits a 1 (popcount). Requiere SSE4.2.</td><td><code>popcnt rax, rbx</code></td></tr>
-						<tr><td><code>lzcnt dst, src</code></td><td>Cuenta ceros a la izquierda. Requiere LZCNT.</td><td><code>lzcnt rax, rbx</code></td></tr>
-						<tr><td><code>tzcnt dst, src</code></td><td>Cuenta ceros a la derecha. Equivale a <code>bsf</code>. Requiere BMI1.</td><td><code>tzcnt rax, rbx</code></td></tr>
+						<tr><td><code>and dst, src</code></td><td>AND bit a bit. Flags: OF=CF=0, SF, ZF, PF.</td><td><code>and rax, 0x0F</code> (máscara de 4 bits bajos)</td></tr>
+						<tr><td><code>or dst, src</code></td><td>OR bit a bit.</td><td><code>or rax, 1</code> (setear bit 0)</td></tr>
+						<tr><td><code>xor dst, src</code></td><td>XOR bit a bit. <code>xor rax, rax</code> pone <code>rax = 0</code> de forma eficiente.</td><td><code>xor rax, rax</code></td></tr>
+						<tr><td><code>not dst</code></td><td>NOT bit a bit (invierte todos los bits).</td><td><code>not rax</code></td></tr>
+						<tr><td><code>test dst, src</code></td><td>AND sin guardar resultado. Solo afecta flags. Equivale a <code>cmp</code> contra 0.</td><td><code>test al, al</code> (verifica si AL es 0)</td></tr>
+						<tr><td><code>shl dst, n</code></td><td>Desplazamiento lógico a la izquierda (equivale a <code>sal</code>).</td><td><code>shl rax, 3</code> (multiplica por 8)</td></tr>
+						<tr><td><code>shr dst, n</code></td><td>Desplazamiento lógico a la derecha (rellena con 0).</td><td><code>shr rax, 1</code> (divide por 2 sin signo)</td></tr>
+						<tr><td><code>sal dst, n</code></td><td>Desplazamiento aritmético a la izquierda (idéntico a <code>shl</code>).</td><td><code>sal rax, 1</code></td></tr>
+						<tr><td><code>sar dst, n</code></td><td>Desplazamiento aritmético a la derecha (rellena con bit de signo).</td><td><code>sar rax, 1</code> (divide por 2 con signo)</td></tr>
+						<tr><td><code>rol dst, n</code></td><td>Rotación a la izquierda.</td><td><code>rol rax, 8</code></td></tr>
+						<tr><td><code>ror dst, n</code></td><td>Rotación a la derecha.</td><td><code>ror rax, 8</code></td></tr>
+						<tr><td><code>rcl dst, n</code></td><td>Rotación a la izquierda con CF.</td><td><code>rcl rax, 1</code></td></tr>
+						<tr><td><code>rcr dst, n</code></td><td>Rotación a la derecha con CF.</td><td><code>rcr rax, 1</code></td></tr>
+						<tr><td><code>bt base, idx</code></td><td>Test bit: <code>CF = bit idx de base</code>.</td><td><code>bt rax, 5</code></td></tr>
+						<tr><td><code>bts base, idx</code></td><td>Test and set.</td><td><code>bts [rbx], 3</code></td></tr>
+						<tr><td><code>btr base, idx</code></td><td>Test and reset.</td><td><code>btr rax, 7</code></td></tr>
+						<tr><td><code>btc base, idx</code></td><td>Test and complement.</td><td><code>btc rax, 9</code></td></tr>
+						<tr><td><code>bsf dst, src</code></td><td>Bit scan forward: encuentra el primer bit a 1 (hacia el LSB).</td><td><code>bsf rax, rbx</code></td></tr>
+						<tr><td><code>bsr dst, src</code></td><td>Bit scan reverse: primer bit a 1 hacia el MSB.</td><td><code>bsr rax, rbx</code></td></tr>
+						<tr><td><code>popcnt dst, src</code></td><td>Cuenta bits a 1 (popcount). Requiere SSE4.2.</td><td><code>popcnt rax, rbx</code></td></tr>
+						<tr><td><code>lzcnt dst, src</code></td><td>Cuenta ceros a la izquierda. Requiere LZCNT.</td><td><code>lzcnt rax, rbx</code></td></tr>
+						<tr><td><code>tzcnt dst, src</code></td><td>Cuenta ceros a la derecha. Equivale a <code>bsf</code>. Requiere BMI1.</td><td><code>tzcnt rax, rbx</code></td></tr>
 					</tbody>
 				</table>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 8: Comparación y Saltos Condicionales
-			============================================================ -->
 			<fieldset id="section-cmp" class="register-section">
 				<legend id="legend-cmp">Comparación y Saltos Condicionales</legend>
-
 				<p class="nasm-note">Todas las instrucciones de salto (<code>jXX</code>) leen los <strong>flags</strong> que dejó la última operación que modificó flags (<code>cmp</code>, <code>test</code>, <code>add</code>, <code>sub</code>, etc.).</p>
-
 				<table id="table-cmp">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>cmp rax, rbx</code></td><td>Compara <code>rax - rbx</code> y actualiza flags. No guarda el resultado.</td><td><code>cmp rax, rbx</code></td></tr>
-						<tr><td><code>test rax, rbx</code></td><td>AND sin guardar. <code>test rax, rax</code> verifica si <code>rax = 0</code>.</td><td><code>test rax, rax</code></td></tr>
-						<tr><td><code>jmp etiqueta</code></td><td>Salto <strong>incondicional</strong>.</td><td><code>jmp .mi_etiqueta</code></td></tr>
+						<tr><td><code>cmp rax, rbx</code></td><td>Compara <code>rax - rbx</code> y actualiza flags. No guarda el resultado.</td><td><code>cmp rax, rbx</code></td></tr>
+						<tr><td><code>test rax, rbx</code></td><td>AND sin guardar. <code>test rax, rax</code> verifica si <code>rax = 0</code>.</td><td><code>test rax, rax</code></td></tr>
+						<tr><td><code>jmp etiqueta</code></td><td>Salto <strong>incondicional</strong>.</td><td><code>jmp .mi_etiqueta</code></td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-note">Tras una instrucción que modifica flags (<code>cmp</code>, <code>test</code>, <code>add</code>, <code>sub</code>, etc.), los saltos leen esos flags. Los ejemplos siguientes asumen <code>cmp rax, rbx</code>.</p>
-
 				<p class="nasm-section">Saltos condicionales <strong>sin signo</strong> (tras <code>cmp rax, rbx</code>):</p>
 				<table>
 					<thead><tr><th>Salto</th><th>Salta si...</th><th>Equivale a...</th></tr></thead>
 					<tbody>
-						<tr><td><code>je / jz</code></td><td><code>rax == rbx</code></td><td>Equal / Zero (ZF=1)</td></tr>
-						<tr><td><code>jne / jnz</code></td><td><code>rax != rbx</code></td><td>Not equal / Not zero (ZF=0)</td></tr>
-						<tr><td><code>ja</code> / <code>jnbe</code></td><td><code>rax &gt; rbx</code> <em>(sin signo)</em></td><td>Above (CF=0 y ZF=0)</td></tr>
-						<tr><td><code>jae</code> / <code>jnb</code> / <code>jnc</code></td><td><code>rax &gt;= rbx</code></td><td>Above or equal (CF=0)</td></tr>
-						<tr><td><code>jb</code> / <code>jnae</code> / <code>jc</code></td><td><code>rax &lt; rbx</code></td><td>Below (CF=1)</td></tr>
-						<tr><td><code>jbe</code> / <code>jna</code></td><td><code>rax &lt;= rbx</code></td><td>Below or equal (CF=1 o ZF=1)</td></tr>
+						<tr><td><code>je / jz</code></td><td><code>rax == rbx</code></td><td>Equal / Zero (ZF=1)</td></tr>
+						<tr><td><code>jne / jnz</code></td><td><code>rax != rbx</code></td><td>Not equal / Not zero (ZF=0)</td></tr>
+						<tr><td><code>ja</code> / <code>jnbe</code></td><td><code>rax > rbx</code> <em>(sin signo)</em></td><td>Above (CF=0 y ZF=0)</td></tr>
+						<tr><td><code>jae</code> / <code>jnb</code> / <code>jnc</code></td><td><code>rax >= rbx</code></td><td>Above or equal (CF=0)</td></tr>
+						<tr><td><code>jb</code> / <code>jnae</code> / <code>jc</code></td><td><code>rax < rbx</code></td><td>Below (CF=1)</td></tr>
+						<tr><td><code>jbe</code> / <code>jna</code></td><td><code>rax <= rbx</code></td><td>Below or equal (CF=1 o ZF=1)</td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Saltos condicionales <strong>con signo</strong> (tras <code>cmp rax, rbx</code>):</p>
 				<table>
 					<thead><tr><th>Salto</th><th>Salta si...</th><th>Flags</th></tr></thead>
 					<tbody>
-						<tr><td><code>jg</code> / <code>jnle</code></td><td><code>rax &gt; rbx</code> (con signo)</td><td>ZF=0 y SF=OF</td></tr>
-						<tr><td><code>jge</code> / <code>jnl</code></td><td><code>rax &gt;= rbx</code></td><td>SF=OF</td></tr>
-						<tr><td><code>jl</code> / <code>jnge</code></td><td><code>rax &lt; rbx</code></td><td>SF≠OF</td></tr>
-						<tr><td><code>jle</code> / <code>jng</code></td><td><code>rax &lt;= rbx</code></td><td>ZF=1 o SF≠OF</td></tr>
+						<tr><td><code>jg</code> / <code>jnle</code></td><td><code>rax > rbx</code> (con signo)</td><td>ZF=0 y SF=OF</td></tr>
+						<tr><td><code>jge</code> / <code>jnl</code></td><td><code>rax >= rbx</code></td><td>SF=OF</td></tr>
+						<tr><td><code>jl</code> / <code>jnge</code></td><td><code>rax < rbx</code></td><td>SF≠OF</td></tr>
+						<tr><td><code>jle</code> / <code>jng</code></td><td><code>rax <= rbx</code></td><td>ZF=1 o SF≠OF</td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Saltos por flag individual:</p>
 				<table>
 					<thead><tr><th>Salto</th><th>Salta si...</th></tr></thead>
@@ -350,55 +310,44 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 					</tbody>
 				</table>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 9: Bucles
-			============================================================ -->
 			<fieldset id="section-loop" class="register-section">
 				<legend id="legend-loop">Bucles e Iteraciones</legend>
-
 				<table id="table-loop">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>loop etiqueta</code></td><td>Decrementa <code>RCX</code> y salta si no es cero. Equivale a <code>dec rcx; jnz etiqueta</code>.</td><td><code>loop .bucle</code></td></tr>
+						<tr><td><code>loop etiqueta</code></td><td>Decrementa <code>RCX</code> y salta si no es cero. Equivale a <code>dec rcx; jnz etiqueta</code>.</td><td><code>loop .bucle</code></td></tr>
 						<tr><td><code>loope</code> / <code>loopz</code></td><td>Decrementa <code>RCX</code> y salta si no es cero <em>y</em> ZF=1.</td><td><code>loope .bucle</code></td></tr>
 						<tr><td><code>loopne</code> / <code>loopnz</code></td><td>Decrementa <code>RCX</code> y salta si no es cero <em>y</em> ZF=0.</td><td><code>loopne .bucle</code></td></tr>
-						<tr><td><code>jrcxz etiqueta</code></td><td>Salta si <code>RCX = 0</code> (sin decrementar). Para bucles con contador inicial a 0.</td><td><code>jrcxz .fin</code></td></tr>
+						<tr><td><code>jrcxz etiqueta</code></td><td>Salta si <code>RCX = 0</code> (sin decrementar). Para bucles con contador inicial a 0.</td><td><code>jrcxz .fin</code></td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Patrón típico de bucle con NASM (cuenta regresiva de 10 a 1):</p>
-				<pre><code><span class="kw">mov</span> <span class="reg">rcx</span>, <span class="num">10</span>            <span class="cm">; contador inicial (10 iteraciones)</span>
+<pre>
+<code><span class="kw">mov</span> <span class="reg">rcx</span>, <span class="num">10</span>            <span class="cm">; contador inicial (10 iteraciones)</span>
 <span class="lab">.bucle:</span>
     <span class="cm">; ... cuerpo del bucle ...</span>
     <span class="kw">loop</span> .bucle              <span class="cm">; rcx--; salta a .bucle si rcx != 0</span>
     <span class="cm">; al salir, rcx == 0</span>
-
 <span class="cm">; Variante: salto al final si el contador empieza en 0</span>
 <span class="kw">jrcxz</span> .fin               <span class="cm">; salta si rcx == 0</span>
 <span class="lab">.bucle:</span>
     <span class="cm">; ... cuerpo ...</span>
     <span class="kw">loop</span> .bucle
-<span class="lab">.fin:</span></code></pre>
+<span class="lab">.fin:</span></code>
+</pre>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 10: Llamadas a Funciones y Syscalls
-			============================================================ -->
 			<fieldset id="section-call" class="register-section">
 				<legend id="legend-call">Llamadas a Funciones y Syscalls</legend>
-
 				<table id="table-call">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>call etiqueta</code></td><td>Salta a la función guardando la dirección de retorno en la pila (<code>RSP</code>).</td><td><code>call mi_funcion</code></td></tr>
+						<tr><td><code>call etiqueta</code></td><td>Salta a la función guardando la dirección de retorno en la pila (<code>RSP</code>).</td><td><code>call mi_funcion</code></td></tr>
 						<tr><td><code>ret</code></td><td>Retorna de la función: <code>RIP = [RSP]; RSP += 8</code>.</td><td><code>ret</code></td></tr>
 						<tr><td><code>syscall</code></td><td>Invoca una <strong>syscall de Linux</strong>. Número en <code>RAX</code>, args en <code>RDI, RSI, RDX, R10, R8, R9</code>. Retorno en <code>RAX</code> (o <code>-errno</code>).</td><td><code>mov rax, 60; xor rdi, rdi; syscall</code> (exit(0))</td></tr>
 						<tr><td><code>sysenter</code></td><td>Syscall rápida (32 bits principalmente, raramente usado en x86_64 moderno).</td><td><code>sysenter</code></td></tr>
-						<tr><td><code>int 0x80</code></td><td>Llamada al sistema vía <strong>interrupción 0x80</strong> (32 bits, legada). En x86_64 usar <code>syscall</code>.</td><td><code>int 0x80</code></td></tr>
+						<tr><td><code>int 0x80</code></td><td>Llamada al sistema vía <strong>interrupción 0x80</strong> (32 bits, legada). En x86_64 usar <code>syscall</code>.</td><td><code>int 0x80</code></td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Convención de syscall Linux x86_64:</p>
 				<ul style="padding-left:1.5rem;line-height:1.7">
 					<li><strong>RAX</strong> = número de syscall</li>
@@ -412,92 +361,74 @@ $ nm programa                      <span class="cm">; lista símbolos de .symtab
 					<li><strong>RCX</strong> y <strong>R11</strong> son destruidos por <code>syscall</code></li>
 				</ul>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 11: Pila
-			============================================================ -->
 			<fieldset id="section-stack" class="register-section">
 				<legend id="legend-stack">Pila (Stack)</legend>
-
 				<table id="table-stack">
 					<thead><tr><th>Instrucción</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
 					<tbody>
-						<tr><td><code>push src</code></td><td>Empuja <code>src</code> en la pila: <code>RSP -= 8; [RSP] = src</code>.</td><td><code>push rax</code><br><code>push 42</code><br><code>push rbx</code></td></tr>
-						<tr><td><code>pop dst</code></td><td>Saca el tope: <code>dst = [RSP]; RSP += 8</code>.</td><td><code>pop rbx</code></td></tr>
+						<tr><td><code>push src</code></td><td>Empuja <code>src</code> en la pila: <code>RSP -= 8; [RSP] = src</code>.</td><td><code>push rax</code><br><code>push 42</code><br><code>push rbx</code></td></tr>
+						<tr><td><code>pop dst</code></td><td>Saca el tope: <code>dst = [RSP]; RSP += 8</code>.</td><td><code>pop rbx</code></td></tr>
 						<tr><td><code>pushfq</code></td><td>Empuja <code>RFLAGS</code> en la pila.</td><td><code>pushfq</code></td></tr>
 						<tr><td><code>popfq</code></td><td>Saca <code>RFLAGS</code> de la pila.</td><td><code>popfq</code></td></tr>
 						<tr><td><code>pusha</code> / <code>popa</code></td><td>Empuja/saca los 8 registros de 16 bits (raro en 64 bits, requiere prefijo <code>o32</code> o <code>a32</code>).</td><td><code>pusha</code><br><code>popa</code></td></tr>
-						<tr><td><code>enter size, level</code></td><td>Crea un marco de pila (raro, mejor hacerlo con <code>push rbp; mov rbp, rsp; sub rsp, size</code>).</td><td><code>enter 16, 0</code><br><code>; equivalente a:</code><br><code>; push rbp</code><br><code>; mov rbp, rsp</code><br><code>; sub rsp, 16</code></td></tr>
+						<tr><td><code>enter size, level</code></td><td>Crea un marco de pila (raro, mejor hacerlo con <code>push rbp; mov rbp, rsp; sub rsp, size</code>).</td><td><code>enter 16, 0</code><br><code>; equivalente a:</code><br><code>; push rbp</code><br><code>; mov rbp, rsp</code><br><code>; sub rsp, 16</code></td></tr>
 						<tr><td><code>leave</code></td><td>Equivale a <code>mov rsp, rbp; pop rbp</code> (destruye el marco).</td><td><code>leave</code></td></tr>
 					</tbody>
 				</table>
-
 				<p class="nasm-section">Convención de llamada System V AMD64 (x86_64 Linux):</p>
 				<ul style="padding-left:1.5rem;line-height:1.7">
 					<li>Argumentos <strong>enteros</strong>: <code>RDI, RSI, RDX, RCX, R8, R9</code></li>
-					<li>Argumentos <strong>flotantes</strong>: <code>XMM0–XMM7</code></li>
+					<li>Argumentos <strong>flotantes</strong>: <code>XMM0-XMM7</code></li>
 					<li>Retorno en <code>RAX</code> (enteros) o <code>XMM0</code> (flotantes)</li>
-					<li>Registros <strong>preservados por la función</strong> (callee-saved): <code>RBX, RBP, R12–R15, RSP</code></li>
-					<li>Registros <strong>volátiles</strong> (caller-saved): <code>RAX, RCX, RDX, RSI, RDI, R8–R11</code></li>
+					<li>Registros <strong>preservados por la función</strong> (callee-saved): <code>RBX, RBP, R12-R15, RSP</code></li>
+					<li>Registros <strong>volátiles</strong> (caller-saved): <code>RAX, RCX, RDX, RSI, RDI, R8-R11</code></li>
 					<li>El frame se alinea a 16 bytes antes de la instrucción <code>call</code> (es decir, <code>RSP ≡ 0 (mod 16)</code> al entrar a la función).</li>
 				</ul>
-
 				<p class="nasm-section">Esqueleto clásico de función:</p>
-				<pre><code><span class="kw">global</span> mi_funcion
+<pre>
+<code><span class="kw">global</span> mi_funcion
 <span class="lab">mi_funcion:</span>
     <span class="kw">push</span> <span class="reg">rbp</span>              <span class="cm">; guarda el frame pointer</span>
     <span class="kw">mov</span>  <span class="reg">rbp</span>, <span class="reg">rsp</span>          <span class="cm">; nuevo frame pointer</span>
     <span class="kw">push</span> <span class="reg">rbx</span>              <span class="cm">; guarda registros callee-saved</span>
     <span class="kw">sub</span>  <span class="reg">rsp</span>, <span class="num">16</span>          <span class="cm">; reserva 16 bytes de locales</span>
-
     <span class="cm">; ... código de la función ...</span>
     <span class="cm">; usar rax para el retorno</span>
-
     <span class="kw">add</span> <span class="reg">rsp</span>, <span class="num">16</span>           <span class="cm">; libera locales</span>
     <span class="kw">pop</span> <span class="reg">rbx</span>               <span class="cm">; restaura registros</span>
     <span class="kw">pop</span> <span class="reg">rbp</span>               <span class="cm">; restaura frame pointer</span>
-    <span class="kw">ret</span>                   <span class="cm">; retorna (RSP += 8)</span></code></pre>
+    <span class="kw">ret</span>                   <span class="cm">; retorna (RSP += 8)</span></code>
+</pre>
 			</fieldset>
-
-			<!-- ============================================================
-			SECCIÓN 13: Compilación y Buenas Prácticas
-			============================================================ -->
 			<fieldset id="section-tips" class="register-section">
 				<legend id="legend-tips">Compilación y Buenas Prácticas</legend>
-
 				<p class="nasm-section">Comandos de ensamblado y enlazado:</p>
-				<pre><code><span class="cm">; Ensamblar a objeto ELF64</span>
+<pre>
+<code><span class="cm">; Ensamblar a objeto ELF64</span>
 $ nasm -f elf64 archivo.asm -o archivo.o
-
 <span class="cm">; Enlazar a ejecutable (solo _start, sin libc)</span>
 $ ld archivo.o -o programa
-
 <span class="cm">; O con gcc (permite usar extern, printf, etc.)</span>
 $ gcc archivo.o -o programa
-
 <span class="cm">; Ensamblar, enlazar y ejecutar</span>
-$ nasm -f elf64 archivo.asm -o archivo.o &amp;&amp; ld archivo.o -o prog &amp;&amp; ./prog
-
+$ nasm -f elf64 archivo.asm -o archivo.o && ld archivo.o -o prog && ./prog
 <span class="cm">; Debugging con GDB</span>
 $ nasm -f elf64 -g archivo.asm -o archivo.o
 $ ld archivo.o -o prog
-$ gdb ./prog</code></pre>
-
+$ gdb ./prog</code>
+</pre>
 				<p class="nasm-section">Buenas prácticas:</p>
 				<ul style="padding-left:1.5rem;line-height:1.7">
 					<li><strong>Documenta</strong> con <code>;</code> cada sección, cada syscall y cada lógica no trivial.</li>
 					<li><strong>Usa <code>equ</code></strong> para números mágicos: <code>STDIN equ 0</code>, <code>STDOUT equ 1</code>, <code>SYSCALL_WRITE equ 1</code>.</li>
-					<li><strong>Guarda y restaura</strong> registros callee-saved (<code>RBX, RBP, R12–R15</code>) en funciones.</li>
+					<li><strong>Guarda y restaura</strong> registros callee-saved (<code>RBX, RBP, R12-R15</code>) en funciones.</li>
 					<li><strong>Alinea la pila</strong> a 16 bytes antes de <code>call</code> en x86_64 System V (importante para SSE/AVX).</li>
 					<li><strong>Verifica retornos</strong> de syscall: si <code>RAX</code> es negativo (≥ <code>0x8000000000000000</code>), es un error; el valor absoluto es <code>errno</code>.</li>
 					<li><strong>Evita <code>int 0x80</code></strong> en x86_64; usa <code>syscall</code> (es más rápido y la convención de argumentos es <code>R10</code> en vez de <code>RCX</code>).</li>
 					<li><strong><code>xor reg, reg</code></strong> es más eficiente que <code>mov reg, 0</code> (ocupa menos bytes).</li>
 					<li><strong>Usa <code>syscall</code> solo en núcleo</strong>: para programas con libc, usa las funciones de C (<code>printf</code>, <code>scanf</code>, etc.) y enlaza con <code>gcc</code>.</li>
 				</ul>
-
 			</fieldset>
-
 		</main>
-
 	</body>
 </html>
