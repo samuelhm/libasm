@@ -1,176 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Referencia R&aacute;pida — ASM x86_64</title>
-  <link rel="stylesheet" href="register_styles.css">
-</head>
-<body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Referencia Rápida — ASM x86_64</title>
+		<link rel="stylesheet" href="register_styles.css">
+	</head>
+	<body>
 
-  <header id="header-main">
-    <h1 id="title-main">Referencia R&aacute;pida — ASM x86_64</h1>
-  </header>
+		<header id="header-main">
+			<h1 id="title-main">Referencia Rápida — ASM x86_64</h1>
+		</header>
 
-  <main id="main-content">
-    <fieldset id="section-regs" class="register-section">
-      <legend id="legend-regs">Registros de Prop&oacute;sito General</legend>
-      <table id="table-regs">
-        <thead>
-          <tr id="thead-regs">
-            <th>64</th>
-            <th>32</th>
-            <th>Descripci&oacute;n</th>
-            <th>&iquest;Lo preservo?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td><code>RAX</code></td><td><code>EAX</code></td><td>Retorno de funci&oacute;n / ID de syscall.</td><td>Vol&aacute;til*</td></tr>
-          <tr><td><code>RDI</code></td><td><code>EDI</code></td><td>1.&ordm; argumento de funci&oacute;n y syscall.</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>RSI</code></td><td><code>ESI</code></td><td>2.&ordm; argumento / puntero a buffer (<code>read</code>/<code>write</code>).</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>RDX</code></td><td><code>EDX</code></td><td>3.&ordm; argumento / longitud en <code>read</code>/<code>write</code>.</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>RCX</code></td><td><code>ECX</code></td><td>4.&ordm; argumento en C ABI / contador de bucles. En syscall es <code>R10</code>.</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>R8</code></td><td><code>R8D</code></td><td>5.&ordm; argumento en ABI y syscall.</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>R9</code></td><td><code>R9D</code></td><td>6.&ordm; argumento en ABI y syscall.</td><td>Vol&aacute;til</td></tr>
-          <tr><td><code>RBP</code></td><td><code>EBP</code></td><td>Puntero al frame actual de la funci&oacute;n. En <code>_start</code> lo inicializas a 0.</td><td>Preservado</td></tr>
-          <tr><td><code>RBX</code></td><td><code>EBX</code></td><td>Callee-saved para preservar valores entre llamadas.</td><td>Preservado</td></tr>
-          <tr><td><code>R10</code></td><td><code>R10D</code></td><td>4.&ordm; argumento en <strong>syscall</strong> (en ABI normal no se usa).</td><td>Vol&aacute;til*</td></tr>
-          <tr><td><code>R11</code></td><td><code>R11D</code></td><td>Destruido por <code>syscall</code> (guarda <code>RFLAGS</code>).</td><td>Vol&aacute;til*</td></tr>
-          <tr><td><code>R12&ndash;R15</code></td><td><code>R12D&ndash;R15D</code></td><td>Callee-saved adicionales. Variables locales persistentes. Ideales para <code>i</code>, <code>contador</code>, <code>ptr</code>, etc.</td><td>Preservado</td></tr>
-        </tbody>
-      </table>
-      <p class="nasm-note">
-        <strong>Vol&aacute;til</strong>: la funci&oacute;n llamada puede modificarlo, as&iacute; que si quieres conservar su valor debes guardarlo en la pila (<code>push</code>) antes de llamar y restaurarlo (<code>pop</code>) despu&eacute;s.
-      </p>
-      <p class="nasm-note">
-        <strong>Vol&aacute;til*</strong>: ser&aacute;n siempre vol&aacute;tiles aunque intentes preservarlos &mdash; la funci&oacute;n/syscall los machaca.
-      </p>
-      <p class="nasm-note">
-        <strong>Preservado</strong>: la funci&oacute;n llamada los guarda autom&aacute;ticamente seg&uacute;n la ABI; no necesitas hacer <code>push</code>/<code>pop</code> t&uacute; mismo.
-      </p>
-    </fieldset>
-    <fieldset id="section-special" class="register-section">
-      <legend id="legend-special">Registros de Estado y Vectoriales</legend>
-      <table id="table-special">
-        <thead><tr><th>Registro</th><th>Qu&eacute; es</th><th>Cu&aacute;ndo lo uso</th></tr></thead>
-        <tbody>
-          <tr><td><code>RIP</code></td><td>Instruction pointer: pr&oacute;xima instrucci&oacute;n a ejecutar.</td><td>Para PC-relative: <code>lea rax, [rel msg]</code>, <code>call [rel func]</code>.</td></tr>
-          <tr><td><code>RFLAGS</code></td><td>Banderas: ZF, SF, CF, OF, PF, IF, DF.</td><td>Tras <code>cmp</code>/<code>test</code> antes de un <code>jXX</code>.</td></tr>
-          <tr><td><code>CR3</code></td><td>Page table base (solo kernel). <code>0xC0000080</code> = <code>IA32_EFER</code> MSR.</td><td>No se accede desde usuario.</td></tr>
-          <tr><td><code>XMM0&ndash;XMM7</code></td><td>128 bits para <code>float</code>/<code>double</code>/<code>__m128i</code>. Argumentos y retorno en C ABI.</td><td>Cuando paso/tengo <code>float</code> o <code>double</code>.</td></tr>
-          <tr><td><code>XMM8&ndash;XMM15</code></td><td>128 bits extra (vol&aacute;tiles, no se usan en ABI).</td><td>SIMD local.</td></tr>
-          <tr><td><code>FS&nbsp;base</code></td><td>En Linux apunta al TLS del hilo actual.</td><td>Acceso a variables <code>__thread</code>.</td></tr>
-        </tbody>
-      </table>
-    </fieldset>
-    <fieldset id="section-syscalls" class="register-section">
-      <legend id="legend-sys">Top 25 Syscalls (las que uso siempre)</legend>
-      <p class="nasm-note">En orden de uso. <code>RDI, RSI, RDX, R10, R8, R9</code> para los argumentos; retorno en <code>RAX</code>.</p>
-      <table id="table-sys">
-        <thead>
-          <tr id="thead-sys">
-            <th>#</th><th>Nombre</th><th>Argumentos</th><th>Retorno</th><th>Qu&eacute; hace</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="sys-0"><td>0</td><td>read</td><td><code>RDI</code>=fd, <code>RSI</code>=buf, <code>RDX</code>=count</td><td><code>RAX</code>=bytes le&iacute;dos o -errno</td><td>Lee <code>count</code> bytes del <code>fd</code> a <code>buf</code>.</td></tr>
-          <tr id="sys-1"><td>1</td><td>write</td><td><code>RDI</code>=fd, <code>RSI</code>=buf, <code>RDX</code>=count</td><td><code>RAX</code>=bytes escritos o -errno</td><td>Escribe <code>count</code> bytes de <code>buf</code> al <code>fd</code>.</td></tr>
-          <tr id="sys-2"><td>2</td><td>open</td><td><code>RDI</code>=path, <code>RSI</code>=flags, <code>RDX</code>=mode</td><td><code>RAX</code>=fd o -errno</td><td>Abre/crea archivo. <code>flags</code>: <code>O_RDONLY</code>, <code>O_WRONLY</code>, <code>O_RDWR</code>, <code>O_CREAT</code>, <code>O_TRUNC</code>, <code>O_APPEND</code>.</td></tr>
-          <tr id="sys-3"><td>3</td><td>close</td><td><code>RDI</code>=fd</td><td><code>RAX</code>=0 o -errno</td><td>Cierra un descriptor.</td></tr>
-          <tr id="sys-4"><td>4</td><td>stat</td><td><code>RDI</code>=path, <code>RSI</code>=statbuf</td><td><code>RAX</code>=0 o -errno</td><td>Metadatos por ruta. <code>statbuf</code> apunta a struct stat (~144 bytes).</td></tr>
-          <tr id="sys-5"><td>5</td><td>fstat</td><td><code>RDI</code>=fd, <code>RSI</code>=statbuf</td><td><code>RAX</code>=0 o -errno</td><td>Metadatos por fd.</td></tr>
-          <tr id="sys-8"><td>8</td><td>lseek</td><td><code>RDI</code>=fd, <code>RSI</code>=offset, <code>RDX</code>=whence</td><td><code>RAX</code>=nueva posici&oacute;n o -errno</td><td>Mueve el cursor. <code>whence</code>: 0=SET, 1=CUR, 2=END.</td></tr>
-          <tr id="sys-9"><td>9</td><td>mmap</td><td><code>RDI</code>=addr, <code>RSI</code>=len, <code>RDX</code>=prot, <code>R10</code>=flags, <code>R8</code>=fd, <code>R9</code>=offset</td><td><code>RAX</code>=dir o -errno</td><td>Mapea memoria. <code>prot</code>: PROT_READ|WRITE|EXEC. <code>flags</code>: MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED.</td></tr>
-          <tr id="sys-10"><td>10</td><td>mprotect</td><td><code>RDI</code>=addr, <code>RSI</code>=len, <code>RDX</code>=prot</td><td><code>RAX</code>=0 o -errno</td><td>Cambia permisos de un mapeo.</td></tr>
-          <tr id="sys-11"><td>11</td><td>munmap</td><td><code>RDI</code>=addr, <code>RSI</code>=len</td><td><code>RAX</code>=0 o -errno</td><td>Desmapea memoria.</td></tr>
-          <tr id="sys-12"><td>12</td><td>brk</td><td><code>RDI</code>=addr</td><td><code>RAX</code>=nuevo brk o -errno</td><td>Ajusta el fin del segmento de datos (heap). Para <code>malloc</code> casero.</td></tr>
-          <tr id="sys-16"><td>16</td><td>ioctl</td><td><code>RDI</code>=fd, <code>RSI</code>=request, <code>RDX</code>=arg</td><td><code>RAX</code>=depende o -errno</td><td>Operaci&oacute;n de control sobre dispositivo (terminales, sockets, etc.).</td></tr>
-          <tr id="sys-21"><td>21</td><td>access</td><td><code>RDI</code>=path, <code>RSI</code>=mode</td><td><code>RAX</code>=0 o -errno</td><td>Comprueba permisos. <code>mode</code>: R_OK=4, W_OK=2, X_OK=1, F_OK=0.</td></tr>
-          <tr id="sys-22"><td>22</td><td>pipe</td><td><code>RDI</code>=fds[2]</td><td><code>RAX</code>=0 o -errno</td><td>Crea un pipe. <code>fds[0]</code>=lectura, <code>fds[1]</code>=escritura.</td></tr>
-          <tr id="sys-33"><td>33</td><td>dup2</td><td><code>RDI</code>=oldfd, <code>RSI</code>=newfd</td><td><code>RAX</code>=newfd o -errno</td><td>Duplica <code>oldfd</code> en <code>newfd</code>. Usado para redireccionar stdin/stdout/stderr.</td></tr>
-          <tr id="sys-35"><td>35</td><td>nanosleep</td><td><code>RDI</code>=req, <code>RSI</code>=rem</td><td><code>RAX</code>=0 o -errno</td><td>Duerme con precisi&oacute;n ns. <code>struct timespec</code> (tv_sec, tv_nsec).</td></tr>
-          <tr id="sys-39"><td>39</td><td>getpid</td><td>(sin args)</td><td><code>RAX</code>=pid</td><td>PID del proceso actual.</td></tr>
-          <tr id="sys-41"><td>41</td><td>socket</td><td><code>RDI</code>=domain, <code>RSI</code>=type, <code>RDX</code>=protocol</td><td><code>RAX</code>=fd o -errno</td><td>Crea socket. AF_INET=2 (IPv4), AF_INET6=10. SOCK_STREAM=1, SOCK_DGRAM=2.</td></tr>
-          <tr id="sys-42"><td>42</td><td>connect</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=0 o -errno</td><td>Conecta a servidor.</td></tr>
-          <tr id="sys-43"><td>43</td><td>accept</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=fd o -errno</td><td>Acepta conexi&oacute;n entrante (server).</td></tr>
-          <tr id="sys-49"><td>49</td><td>bind</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=0 o -errno</td><td>Asocia socket a puerto/dir local.</td></tr>
-          <tr id="sys-50"><td>50</td><td>listen</td><td><code>RDI</code>=fd, <code>RSI</code>=backlog</td><td><code>RAX</code>=0 o -errno</td><td>Marca socket como pasivo (server).</td></tr>
-          <tr id="sys-57"><td>57</td><td>fork</td><td>(sin args)</td><td><code>RAX</code>=0 (hijo) o pid (padre)</td><td>Clona el proceso.</td></tr>
-          <tr id="sys-59"><td>59</td><td>execve</td><td><code>RDI</code>=path, <code>RSI</code>=argv, <code>RDX</code>=envp</td><td>nunca retorna si &eacute;xito</td><td>Reemplaza el proceso con uno nuevo.</td></tr>
-          <tr id="sys-60"><td>60</td><td>exit</td><td><code>RDI</code>=status</td><td>NO retorna</td><td>Termina el proceso. Solo el hilo.</td></tr>
-          <tr id="sys-61"><td>61</td><td>wait4</td><td><code>RDI</code>=pid, <code>RSI</code>=wstatus, <code>RDX</code>=options, <code>R10</code>=rusage</td><td><code>RAX</code>=pid del hijo o -errno</td><td>Espera al hijo. <code>pid=-1</code> = cualquier hijo.</td></tr>
-          <tr id="sys-62"><td>62</td><td>kill</td><td><code>RDI</code>=pid, <code>RSI</code>=sig</td><td><code>RAX</code>=0 o -errno</td><td>Env&iacute;a se&ntilde;al. <code>pid=0</code> = grupo, <code>pid=-1</code> = todos.</td></tr>
-          <tr id="sys-228"><td>228</td><td>clock_gettime</td><td><code>RDI</code>=clockid, <code>RSI</code>=tp</td><td><code>RAX</code>=0 o -errno</td><td>Hora actual. <code>CLOCK_MONOTONIC</code>=1, <code>CLOCK_REALTIME</code>=0.</td></tr>
-          <tr id="sys-231"><td>231</td><td>exit_group</td><td><code>RDI</code>=status</td><td>NO retorna</td><td>Termina todos los hilos. Lo normal para salir.</td></tr>
-        </tbody>
-      </table>
-    </fieldset>
-    <fieldset id="section-instr" class="register-section">
-      <legend id="legend-instr">Instrucciones que m&aacute;s uso</legend>
-      <p class="nasm-note">Selecci&oacute;n reducida para tener siempre a mano. Para el listado completo mira <code>nasm.html</code>.</p>
-      <table id="table-instr">
-        <thead><tr><th>Instrucci&oacute;n</th><th>Qu&eacute; hace</th><th>Uso t&iacute;pico</th></tr></thead>
-        <tbody>
-          <tr><td><code>mov&nbsp;dst,&nbsp;src</code></td><td>Copia un valor.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
-          <tr><td><code>lea&nbsp;dst,&nbsp;[mem]</code></td><td>Carga la <strong>direcci&oacute;n efectiva</strong>, no el contenido.</td><td><code>lea rax, [rbx+rcx*4]</code><br><code>lea rsi, [rel msg]</code></td></tr>
-          <tr><td><code>xchg&nbsp;a,&nbsp;b</code></td><td>Intercambia.</td><td><code>xchg rax, rbx</code></td></tr>
-          <tr><td><code>movzx&nbsp;dst,&nbsp;src</code></td><td>Mueve extendiendo con ceros.</td><td><code>movzx rax, al</code> (byte &rarr; qword)</td></tr>
-          <tr><td><code>push&nbsp;src</code> / <code>pop&nbsp;dst</code></td><td>Empuja/saca de la pila.</td><td><code>push rax</code><br><code>pop rbx</code></td></tr>
-          <tr><td><code>add&nbsp;dst,&nbsp;src</code> / <code>sub</code></td><td>Suma/resta.</td><td><code>add rax, rbx</code><br><code>sub rsp, 16</code></td></tr>
-          <tr><td><code>inc&nbsp;dst</code> / <code>dec&nbsp;dst</code></td><td>+1 / -1 (no afecta CF).</td><td><code>inc rcx</code><br><code>dec rax</code></td></tr>
-          <tr><td><code>imul&nbsp;dst,&nbsp;src1,&nbsp;src2</code></td><td>Multiplicaci&oacute;n de 3 operandos.</td><td><code>imul rax, rbx, 10</code> (<code>rax = rbx * 10</code>)</td></tr>
-          <tr><td><code>idiv&nbsp;src</code></td><td>Divisi&oacute;n con signo. <code>RDX:RAX / src</code>.</td><td><code>idiv rbx</code> (cociente en <code>RAX</code>, resto en <code>RDX</code>)</td></tr>
-          <tr><td><code>cqo</code> / <code>cdq</code></td><td>Extiende signo de <code>RAX</code> a <code>RDX:RAX</code> (o <code>EAX</code> a <code>EDX:EAX</code>) antes de <code>idiv</code>.</td><td><code>cqo</code><br><code>idiv rbx</code></td></tr>
-          <tr><td><code>and</code> / <code>or</code> / <code>xor</code></td><td>AND/OR/XOR bit a bit. <code>xor rax, rax</code> = <code>rax = 0</code> (m&aacute;s eficiente que <code>mov rax, 0</code>).</td><td><code>xor rax, rax</code><br><code>and rax, 0x0F</code></td></tr>
-          <tr><td><code>shl</code> / <code>shr</code> / <code>sar</code></td><td>Desplazamientos. <code>shl rax, 3</code> multiplica por 8. <code>sar rax, 1</code> divide con signo.</td><td><code>shl rax, 3</code></td></tr>
-          <tr><td><code>test&nbsp;dst,&nbsp;src</code></td><td>AND sin guardar. Solo afecta flags. <code>test rax, rax</code> &rarr; ZF=1 si <code>rax=0</code>.</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
-          <tr><td><code>cmp&nbsp;a,&nbsp;b</code></td><td>Compara <code>a - b</code>, afecta flags.</td><td><code>cmp rax, rbx</code><br><code>je .iguales</code></td></tr>
-          <tr><td><code>jmp&nbsp;etiqueta</code></td><td>Salto incondicional.</td><td><code>jmp .bucle</code></td></tr>
-          <tr><td><code>je</code> / <code>jne</code></td><td>Salta si igual / no igual (ZF=1 / ZF=0).</td><td><code>cmp rax, 0</code><br><code>je .es_cero</code></td></tr>
-          <tr><td><code>jz</code> / <code>jnz</code></td><td>Salta si ZF=1 / ZF=0 (alias de je/jne).</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
-          <tr><td><code>jg</code> / <code>jge</code> / <code>jl</code> / <code>jle</code></td><td>Mayor/menor <strong>con signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>jg .r_mayor</code></td></tr>
-          <tr><td><code>ja</code> / <code>jae</code> / <code>jb</code> / <code>jbe</code></td><td>Mayor/menor <strong>sin signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>ja .r_mayor</code></td></tr>
-          <tr><td><code>call&nbsp;etiqueta</code></td><td>Salta a la funci&oacute;n, guarda retorno en pila.</td><td><code>call mi_funcion</code></td></tr>
-          <tr><td><code>ret</code></td><td>Retorna de la funci&oacute;n.</td><td><code>ret</code></td></tr>
-          <tr><td><code>syscall</code></td><td>Llamada al sistema Linux (n&ordm; en <code>RAX</code>).</td><td><code>mov rax, 60</code><br><code>xor rdi, rdi</code><br><code>syscall</code></td></tr>
-          <tr><td><code>loop&nbsp;etiqueta</code></td><td><code>rcx--</code> y salta si no es cero.</td><td><code>mov rcx, 10</code><br><code>.bucle:</code><br><code>...</code><br><code>loop .bucle</code></td></tr>
-          <tr><td><code>leave</code></td><td>Equivale a <code>mov rsp, rbp; pop rbp</code>.</td><td><code>leave</code><br><code>ret</code></td></tr>
-          <tr><td><code>ret&nbsp;n</code></td><td>Retorna y suma <code>n</code> a <code>RSP</code> (para limpiar argumentos de pila en ABI antiguos).</td><td><code>ret 8</code></td></tr>
-          <tr><td><code>nop</code></td><td>No hace nada. 1 byte en x86_64.</td><td>Alineaci&oacute;n, padding, breakpoints en debug.</td></tr>
-          <tr><td><code>int3</code></td><td>Breakpoint (1 byte = <code>0xCC</code>). Lo usa el depurador.</td><td>Para pausas en debug.</td></tr>
-          <tr><td><code>cdqe</code></td><td>Extiende signo de <code>EAX</code> a <code>RAX</code>.</td><td>Tras una operaci&oacute;n 32 bits antes de pasarla a syscall 64.</td></tr>
-        </tbody>
-      </table>
-    </fieldset>
-    <fieldset id="section-elf" class="register-section">
-      <legend id="legend-elf">Secciones ELF64 (las que uso siempre)</legend>
-      <table id="table-elf">
-        <thead><tr><th>Secci&oacute;n</th><th>Para qu&eacute;</th><th>Permisos</th><th>Ejemplo</th></tr></thead>
-        <tbody>
-          <tr><td><code>.text</code></td><td>C&oacute;digo ejecutable.</td><td>R+X</td><td><code>section .text</code></td></tr>
-          <tr><td><code>.data</code></td><td>Variables inicializadas (en disco).</td><td>R+W</td><td><code>section .data</code><br><code>msg db "hola", 10</code></td></tr>
-          <tr><td><code>.bss</code></td><td>Variables sin inicializar (solo en RAM, m&aacute;s eficiente).</td><td>R+W</td><td><code>section .bss</code><br><code>buf resb 1024</code></td></tr>
-          <tr><td><code>.rodata</code></td><td>Constantes, mensajes, tablas. Se cachea con el c&oacute;digo.</td><td>R</td><td><code>section .rodata</code><br><code>fmt db "%d", 0</code></td></tr>
-        </tbody>
-      </table>
-    </fieldset>
-    <fieldset id="section-pit" class="register-section">
-      <legend id="legend-pit">Errores comunes</legend>
-      <ul style="padding-left:1.5rem;line-height:1.7">
-        <li><strong>Olvidar <code>global _start</code></strong> &rarr; el linker no encuentra el punto de entrada.</li>
-        <li><strong>Olvidar <code>section .text</code></strong> &rarr; NASM no sabe d&oacute;nde va el c&oacute;digo.</li>
-        <li><strong>Usar <code>RCX</code> en lugar de <code>R10</code></strong> como 4&ordm; argumento de <code>syscall</code> &rarr; <code>syscall</code> destruye <code>RCX</code>.</li>
-        <li><strong>No guardar <code>RBX, RBP, R12&ndash;R15</code></strong> en una funci&oacute;n &rarr; pierdes valores al retornar.</li>
-        <li><strong>Desbalancear la pila</strong> (un <code>push</code> sin <code>pop</code>) &rarr; crash en el <code>ret</code>.</li>
-        <li><strong>Llamar a <code>int 0x80</code> en 64 bits</strong> &rarr; usa la convenci&oacute;n de 32 bits (RCX en lugar de R10).</li>
-        <li><strong>Olvidar alinear la pila a 16 bytes</strong> antes de <code>call</code> &rarr; crashea si la funci&oacute;n llamada usa SSE/AVX.</li>
-        <li><strong>Confundir <code>jz</code> y <code>je</code></strong> &rarr; son lo mismo, pero <code>je</code> se usa tras <code>cmp</code> y <code>jz</code> tras <code>test</code> (ambos miran ZF).</li>
-        <li><strong>Confundir <code>ja</code> (sin signo) y <code>jg</code> (con signo)</strong> &rarr; con n&uacute;meros negativos <code>ja</code> falla.</li>
-        <li><strong>No comprobar el retorno de <code>syscall</code></strong> &rarr; asumir &eacute;xito cuando fue error.</li>
-        <li><strong>Pasar argumentos en <code>RCX</code> en syscall 64 bits</strong> &rarr; es <code>R10</code>.</li>
-        <li><strong>Olvidar <code>align 16</code> en <code>.bss</code></strong> para buffers que se pasar&aacute;n a SIMD.</li>
-      </ul>
-    </fieldset>
-  </main>
-</body>
+		<main id="main-content">
+			<fieldset id="section-regs" class="register-section">
+				<legend id="legend-regs">Registros de Propósito General</legend>
+				<table id="table-regs">
+					<thead>
+						<tr id="thead-regs">
+							<th>64</th>
+							<th>32</th>
+							<th>Descripción</th>
+							<th>¿Lo preservo?</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td><code>RAX</code></td><td><code>EAX</code></td><td>Retorno de función / ID de syscall.</td><td>Volátil*</td></tr>
+						<tr><td><code>RDI</code></td><td><code>EDI</code></td><td>1.º argumento de función y syscall.</td><td>Volátil</td></tr>
+						<tr><td><code>RSI</code></td><td><code>ESI</code></td><td>2.º argumento / puntero a buffer (<code>read</code>/<code>write</code>).</td><td>Volátil</td></tr>
+						<tr><td><code>RDX</code></td><td><code>EDX</code></td><td>3.º argumento / longitud en <code>read</code>/<code>write</code>.</td><td>Volátil</td></tr>
+						<tr><td><code>RCX</code></td><td><code>ECX</code></td><td>4.º argumento en C ABI / contador de bucles. En syscall es <code>R10</code>.</td><td>Volátil</td></tr>
+						<tr><td><code>R8</code></td><td><code>R8D</code></td><td>5.º argumento en ABI y syscall.</td><td>Volátil</td></tr>
+						<tr><td><code>R9</code></td><td><code>R9D</code></td><td>6.º argumento en ABI y syscall.</td><td>Volátil</td></tr>
+						<tr><td><code>RBP</code></td><td><code>EBP</code></td><td>Puntero al frame actual de la función. En <code>_start</code> lo inicializas a 0.</td><td>Preservado</td></tr>
+						<tr><td><code>RBX</code></td><td><code>EBX</code></td><td>Callee-saved para preservar valores entre llamadas.</td><td>Preservado</td></tr>
+						<tr><td><code>R10</code></td><td><code>R10D</code></td><td>4.º argumento en <strong>syscall</strong> (en ABI normal no se usa).</td><td>Volátil*</td></tr>
+						<tr><td><code>R11</code></td><td><code>R11D</code></td><td>Destruido por <code>syscall</code> (guarda <code>RFLAGS</code>).</td><td>Volátil*</td></tr>
+						<tr><td><code>R12–R15</code></td><td><code>R12D–R15D</code></td><td>Callee-saved adicionales. Variables locales persistentes. Ideales para <code>i</code>, <code>contador</code>, <code>ptr</code>, etc.</td><td>Preservado</td></tr>
+					</tbody>
+				</table>
+				<p class="nasm-note">
+					<strong>Volátil</strong>: la función llamada puede modificarlo, así que si quieres conservar su valor debes guardarlo en la pila (<code>push</code>) antes de llamar y restaurarlo (<code>pop</code>) después.
+				</p>
+				<p class="nasm-note">
+					<strong>Volátil*</strong>: serán siempre volátiles aunque intentes preservarlos — la función/syscall los machaca.
+				</p>
+				<p class="nasm-note">
+					<strong>Preservado</strong>: la función llamada los guarda automáticamente según la ABI; no necesitas hacer <code>push</code>/<code>pop</code> tú mismo.
+				</p>
+			</fieldset>
+			<fieldset id="section-special" class="register-section">
+				<legend id="legend-special">Registros de Estado y Vectoriales</legend>
+				<table id="table-special">
+					<thead><tr><th>Registro</th><th>Qué es</th><th>Cuándo lo uso</th></tr></thead>
+					<tbody>
+						<tr><td><code>RIP</code></td><td>Instruction pointer: próxima instrucción a ejecutar.</td><td>Para PC-relative: <code>lea rax, [rel msg]</code>, <code>call [rel func]</code>.</td></tr>
+						<tr><td><code>RFLAGS</code></td><td>Banderas: ZF, SF, CF, OF, PF, IF, DF.</td><td>Tras <code>cmp</code>/<code>test</code> antes de un <code>jXX</code>.</td></tr>
+						<tr><td><code>CR3</code></td><td>Page table base (solo kernel). <code>0xC0000080</code> = <code>IA32_EFER</code> MSR.</td><td>No se accede desde usuario.</td></tr>
+						<tr><td><code>XMM0–XMM7</code></td><td>128 bits para <code>float</code>/<code>double</code>/<code>__m128i</code>. Argumentos y retorno en C ABI.</td><td>Cuando paso/tengo <code>float</code> o <code>double</code>.</td></tr>
+						<tr><td><code>XMM8–XMM15</code></td><td>128 bits extra (volátiles, no se usan en ABI).</td><td>SIMD local.</td></tr>
+						<tr><td><code>FS base</code></td><td>En Linux apunta al TLS del hilo actual.</td><td>Acceso a variables <code>__thread</code>.</td></tr>
+					</tbody>
+				</table>
+			</fieldset>
+			<fieldset id="section-syscalls" class="register-section">
+				<legend id="legend-sys">Top 25 Syscalls (las que uso siempre)</legend>
+				<p class="nasm-note">En orden de uso. <code>RDI, RSI, RDX, R10, R8, R9</code> para los argumentos; retorno en <code>RAX</code>.</p>
+				<table id="table-sys">
+					<thead>
+						<tr id="thead-sys">
+							<th>#</th><th>Nombre</th><th>Argumentos</th><th>Retorno</th><th>Qué hace</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr id="sys-0"><td>0</td><td>read</td><td><code>RDI</code>=fd, <code>RSI</code>=buf, <code>RDX</code>=count</td><td><code>RAX</code>=bytes leídos o -errno</td><td>Lee <code>count</code> bytes del <code>fd</code> a <code>buf</code>.</td></tr>
+						<tr id="sys-1"><td>1</td><td>write</td><td><code>RDI</code>=fd, <code>RSI</code>=buf, <code>RDX</code>=count</td><td><code>RAX</code>=bytes escritos o -errno</td><td>Escribe <code>count</code> bytes de <code>buf</code> al <code>fd</code>.</td></tr>
+						<tr id="sys-2"><td>2</td><td>open</td><td><code>RDI</code>=path, <code>RSI</code>=flags, <code>RDX</code>=mode</td><td><code>RAX</code>=fd o -errno</td><td>Abre/crea archivo. <code>flags</code>: <code>O_RDONLY</code>, <code>O_WRONLY</code>, <code>O_RDWR</code>, <code>O_CREAT</code>, <code>O_TRUNC</code>, <code>O_APPEND</code>.</td></tr>
+						<tr id="sys-3"><td>3</td><td>close</td><td><code>RDI</code>=fd</td><td><code>RAX</code>=0 o -errno</td><td>Cierra un descriptor.</td></tr>
+						<tr id="sys-4"><td>4</td><td>stat</td><td><code>RDI</code>=path, <code>RSI</code>=statbuf</td><td><code>RAX</code>=0 o -errno</td><td>Metadatos por ruta. <code>statbuf</code> apunta a struct stat (~144 bytes).</td></tr>
+						<tr id="sys-5"><td>5</td><td>fstat</td><td><code>RDI</code>=fd, <code>RSI</code>=statbuf</td><td><code>RAX</code>=0 o -errno</td><td>Metadatos por fd.</td></tr>
+						<tr id="sys-8"><td>8</td><td>lseek</td><td><code>RDI</code>=fd, <code>RSI</code>=offset, <code>RDX</code>=whence</td><td><code>RAX</code>=nueva posición o -errno</td><td>Mueve el cursor. <code>whence</code>: 0=SET, 1=CUR, 2=END.</td></tr>
+						<tr id="sys-9"><td>9</td><td>mmap</td><td><code>RDI</code>=addr, <code>RSI</code>=len, <code>RDX</code>=prot, <code>R10</code>=flags, <code>R8</code>=fd, <code>R9</code>=offset</td><td><code>RAX</code>=dir o -errno</td><td>Mapea memoria. <code>prot</code>: PROT_READ|WRITE|EXEC. <code>flags</code>: MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED.</td></tr>
+						<tr id="sys-10"><td>10</td><td>mprotect</td><td><code>RDI</code>=addr, <code>RSI</code>=len, <code>RDX</code>=prot</td><td><code>RAX</code>=0 o -errno</td><td>Cambia permisos de un mapeo.</td></tr>
+						<tr id="sys-11"><td>11</td><td>munmap</td><td><code>RDI</code>=addr, <code>RSI</code>=len</td><td><code>RAX</code>=0 o -errno</td><td>Desmapea memoria.</td></tr>
+						<tr id="sys-12"><td>12</td><td>brk</td><td><code>RDI</code>=addr</td><td><code>RAX</code>=nuevo brk o -errno</td><td>Ajusta el fin del segmento de datos (heap). Para <code>malloc</code> casero.</td></tr>
+						<tr id="sys-16"><td>16</td><td>ioctl</td><td><code>RDI</code>=fd, <code>RSI</code>=request, <code>RDX</code>=arg</td><td><code>RAX</code>=depende o -errno</td><td>Operación de control sobre dispositivo (terminales, sockets, etc.).</td></tr>
+						<tr id="sys-21"><td>21</td><td>access</td><td><code>RDI</code>=path, <code>RSI</code>=mode</td><td><code>RAX</code>=0 o -errno</td><td>Comprueba permisos. <code>mode</code>: R_OK=4, W_OK=2, X_OK=1, F_OK=0.</td></tr>
+						<tr id="sys-22"><td>22</td><td>pipe</td><td><code>RDI</code>=fds[2]</td><td><code>RAX</code>=0 o -errno</td><td>Crea un pipe. <code>fds[0]</code>=lectura, <code>fds[1]</code>=escritura.</td></tr>
+						<tr id="sys-33"><td>33</td><td>dup2</td><td><code>RDI</code>=oldfd, <code>RSI</code>=newfd</td><td><code>RAX</code>=newfd o -errno</td><td>Duplica <code>oldfd</code> en <code>newfd</code>. Usado para redireccionar stdin/stdout/stderr.</td></tr>
+						<tr id="sys-35"><td>35</td><td>nanosleep</td><td><code>RDI</code>=req, <code>RSI</code>=rem</td><td><code>RAX</code>=0 o -errno</td><td>Duerme con precisión ns. <code>struct timespec</code> (tv_sec, tv_nsec).</td></tr>
+						<tr id="sys-39"><td>39</td><td>getpid</td><td>(sin args)</td><td><code>RAX</code>=pid</td><td>PID del proceso actual.</td></tr>
+						<tr id="sys-41"><td>41</td><td>socket</td><td><code>RDI</code>=domain, <code>RSI</code>=type, <code>RDX</code>=protocol</td><td><code>RAX</code>=fd o -errno</td><td>Crea socket. AF_INET=2 (IPv4), AF_INET6=10. SOCK_STREAM=1, SOCK_DGRAM=2.</td></tr>
+						<tr id="sys-42"><td>42</td><td>connect</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=0 o -errno</td><td>Conecta a servidor.</td></tr>
+						<tr id="sys-43"><td>43</td><td>accept</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=fd o -errno</td><td>Acepta conexión entrante (server).</td></tr>
+						<tr id="sys-49"><td>49</td><td>bind</td><td><code>RDI</code>=fd, <code>RSI</code>=addr, <code>RDX</code>=addrlen</td><td><code>RAX</code>=0 o -errno</td><td>Asocia socket a puerto/dir local.</td></tr>
+						<tr id="sys-50"><td>50</td><td>listen</td><td><code>RDI</code>=fd, <code>RSI</code>=backlog</td><td><code>RAX</code>=0 o -errno</td><td>Marca socket como pasivo (server).</td></tr>
+						<tr id="sys-57"><td>57</td><td>fork</td><td>(sin args)</td><td><code>RAX</code>=0 (hijo) o pid (padre)</td><td>Clona el proceso.</td></tr>
+						<tr id="sys-59"><td>59</td><td>execve</td><td><code>RDI</code>=path, <code>RSI</code>=argv, <code>RDX</code>=envp</td><td>nunca retorna si éxito</td><td>Reemplaza el proceso con uno nuevo.</td></tr>
+						<tr id="sys-60"><td>60</td><td>exit</td><td><code>RDI</code>=status</td><td>NO retorna</td><td>Termina el proceso. Solo el hilo.</td></tr>
+						<tr id="sys-61"><td>61</td><td>wait4</td><td><code>RDI</code>=pid, <code>RSI</code>=wstatus, <code>RDX</code>=options, <code>R10</code>=rusage</td><td><code>RAX</code>=pid del hijo o -errno</td><td>Espera al hijo. <code>pid=-1</code> = cualquier hijo.</td></tr>
+						<tr id="sys-62"><td>62</td><td>kill</td><td><code>RDI</code>=pid, <code>RSI</code>=sig</td><td><code>RAX</code>=0 o -errno</td><td>Envía señal. <code>pid=0</code> = grupo, <code>pid=-1</code> = todos.</td></tr>
+						<tr id="sys-228"><td>228</td><td>clock_gettime</td><td><code>RDI</code>=clockid, <code>RSI</code>=tp</td><td><code>RAX</code>=0 o -errno</td><td>Hora actual. <code>CLOCK_MONOTONIC</code>=1, <code>CLOCK_REALTIME</code>=0.</td></tr>
+						<tr id="sys-231"><td>231</td><td>exit_group</td><td><code>RDI</code>=status</td><td>NO retorna</td><td>Termina todos los hilos. Lo normal para salir.</td></tr>
+					</tbody>
+				</table>
+			</fieldset>
+			<fieldset id="section-instr" class="register-section">
+				<legend id="legend-instr">Instrucciones que más uso</legend>
+				<p class="nasm-note">Selección reducida para tener siempre a mano. Para el listado completo mira <code>nasm.html</code>.</p>
+				<table id="table-instr">
+					<thead><tr><th>Instrucción</th><th>Qué hace</th><th>Uso típico</th></tr></thead>
+					<tbody>
+						<tr><td><code>mov dst, src</code></td><td>Copia un valor.</td><td><code>mov rax, 42</code><br><code>mov [rbx], rax</code></td></tr>
+						<tr><td><code>lea dst, [mem]</code></td><td>Carga la <strong>dirección efectiva</strong>, no el contenido.</td><td><code>lea rax, [rbx+rcx*4]</code><br><code>lea rsi, [rel msg]</code></td></tr>
+						<tr><td><code>xchg a, b</code></td><td>Intercambia.</td><td><code>xchg rax, rbx</code></td></tr>
+						<tr><td><code>movzx dst, src</code></td><td>Mueve extendiendo con ceros.</td><td><code>movzx rax, al</code> (byte → qword)</td></tr>
+						<tr><td><code>push src</code> / <code>pop dst</code></td><td>Empuja/saca de la pila.</td><td><code>push rax</code><br><code>pop rbx</code></td></tr>
+						<tr><td><code>add dst, src</code> / <code>sub</code></td><td>Suma/resta.</td><td><code>add rax, rbx</code><br><code>sub rsp, 16</code></td></tr>
+						<tr><td><code>inc dst</code> / <code>dec dst</code></td><td>+1 / -1 (no afecta CF).</td><td><code>inc rcx</code><br><code>dec rax</code></td></tr>
+						<tr><td><code>imul dst, src1, src2</code></td><td>Multiplicación de 3 operandos.</td><td><code>imul rax, rbx, 10</code> (<code>rax = rbx * 10</code>)</td></tr>
+						<tr><td><code>idiv src</code></td><td>División con signo. <code>RDX:RAX / src</code>.</td><td><code>idiv rbx</code> (cociente en <code>RAX</code>, resto en <code>RDX</code>)</td></tr>
+						<tr><td><code>cqo</code> / <code>cdq</code></td><td>Extiende signo de <code>RAX</code> a <code>RDX:RAX</code> (o <code>EAX</code> a <code>EDX:EAX</code>) antes de <code>idiv</code>.</td><td><code>cqo</code><br><code>idiv rbx</code></td></tr>
+						<tr><td><code>and</code> / <code>or</code> / <code>xor</code></td><td>AND/OR/XOR bit a bit. <code>xor rax, rax</code> = <code>rax = 0</code> (más eficiente que <code>mov rax, 0</code>).</td><td><code>xor rax, rax</code><br><code>and rax, 0x0F</code></td></tr>
+						<tr><td><code>shl</code> / <code>shr</code> / <code>sar</code></td><td>Desplazamientos. <code>shl rax, 3</code> multiplica por 8. <code>sar rax, 1</code> divide con signo.</td><td><code>shl rax, 3</code></td></tr>
+						<tr><td><code>test dst, src</code></td><td>AND sin guardar. Solo afecta flags. <code>test rax, rax</code> → ZF=1 si <code>rax=0</code>.</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
+						<tr><td><code>cmp a, b</code></td><td>Compara <code>a - b</code>, afecta flags.</td><td><code>cmp rax, rbx</code><br><code>je .iguales</code></td></tr>
+						<tr><td><code>jmp etiqueta</code></td><td>Salto incondicional.</td><td><code>jmp .bucle</code></td></tr>
+						<tr><td><code>je</code> / <code>jne</code></td><td>Salta si igual / no igual (ZF=1 / ZF=0).</td><td><code>cmp rax, 0</code><br><code>je .es_cero</code></td></tr>
+						<tr><td><code>jz</code> / <code>jnz</code></td><td>Salta si ZF=1 / ZF=0 (alias de je/jne).</td><td><code>test rax, rax</code><br><code>jz .es_cero</code></td></tr>
+						<tr><td><code>jg</code> / <code>jge</code> / <code>jl</code> / <code>jle</code></td><td>Mayor/menor <strong>con signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>jg .r_mayor</code></td></tr>
+						<tr><td><code>ja</code> / <code>jae</code> / <code>jb</code> / <code>jbe</code></td><td>Mayor/menor <strong>sin signo</strong>.</td><td><code>cmp rax, rbx</code><br><code>ja .r_mayor</code></td></tr>
+						<tr><td><code>call etiqueta</code></td><td>Salta a la función, guarda retorno en pila.</td><td><code>call mi_funcion</code></td></tr>
+						<tr><td><code>ret</code></td><td>Retorna de la función.</td><td><code>ret</code></td></tr>
+						<tr><td><code>syscall</code></td><td>Llamada al sistema Linux (nº en <code>RAX</code>).</td><td><code>mov rax, 60</code><br><code>xor rdi, rdi</code><br><code>syscall</code></td></tr>
+						<tr><td><code>loop etiqueta</code></td><td><code>rcx--</code> y salta si no es cero.</td><td><code>mov rcx, 10</code><br><code>.bucle:</code><br><code>...</code><br><code>loop .bucle</code></td></tr>
+						<tr><td><code>leave</code></td><td>Equivale a <code>mov rsp, rbp; pop rbp</code>.</td><td><code>leave</code><br><code>ret</code></td></tr>
+						<tr><td><code>ret n</code></td><td>Retorna y suma <code>n</code> a <code>RSP</code> (para limpiar argumentos de pila en ABI antiguos).</td><td><code>ret 8</code></td></tr>
+						<tr><td><code>nop</code></td><td>No hace nada. 1 byte en x86_64.</td><td>Alineación, padding, breakpoints en debug.</td></tr>
+						<tr><td><code>int3</code></td><td>Breakpoint (1 byte = <code>0xCC</code>). Lo usa el depurador.</td><td>Para pausas en debug.</td></tr>
+						<tr><td><code>cdqe</code></td><td>Extiende signo de <code>EAX</code> a <code>RAX</code>.</td><td>Tras una operación 32 bits antes de pasarla a syscall 64.</td></tr>
+					</tbody>
+				</table>
+			</fieldset>
+			<fieldset id="section-elf" class="register-section">
+				<legend id="legend-elf">Secciones ELF64 (las que uso siempre)</legend>
+				<table id="table-elf">
+					<thead><tr><th>Sección</th><th>Para qué</th><th>Permisos</th><th>Ejemplo</th></tr></thead>
+					<tbody>
+						<tr><td><code>.text</code></td><td>Código ejecutable.</td><td>R+X</td><td><code>section .text</code></td></tr>
+						<tr><td><code>.data</code></td><td>Variables inicializadas (en disco).</td><td>R+W</td><td><code>section .data</code><br><code>msg db "hola", 10</code></td></tr>
+						<tr><td><code>.bss</code></td><td>Variables sin inicializar (solo en RAM, más eficiente).</td><td>R+W</td><td><code>section .bss</code><br><code>buf resb 1024</code></td></tr>
+						<tr><td><code>.rodata</code></td><td>Constantes, mensajes, tablas. Se cachea con el código.</td><td>R</td><td><code>section .rodata</code><br><code>fmt db "%d", 0</code></td></tr>
+					</tbody>
+				</table>
+			</fieldset>
+			<fieldset id="section-pit" class="register-section">
+				<legend id="legend-pit">Errores comunes</legend>
+				<ul style="padding-left:1.5rem;line-height:1.7">
+					<li><strong>Olvidar <code>global _start</code></strong> → el linker no encuentra el punto de entrada.</li>
+					<li><strong>Olvidar <code>section .text</code></strong> → NASM no sabe dónde va el código.</li>
+					<li><strong>Usar <code>RCX</code> en lugar de <code>R10</code></strong> como 4º argumento de <code>syscall</code> → <code>syscall</code> destruye <code>RCX</code>.</li>
+					<li><strong>No guardar <code>RBX, RBP, R12–R15</code></strong> en una función → pierdes valores al retornar.</li>
+					<li><strong>Desbalancear la pila</strong> (un <code>push</code> sin <code>pop</code>) → crash en el <code>ret</code>.</li>
+					<li><strong>Llamar a <code>int 0x80</code> en 64 bits</strong> → usa la convención de 32 bits (RCX en lugar de R10).</li>
+					<li><strong>Olvidar alinear la pila a 16 bytes</strong> antes de <code>call</code> → crashea si la función llamada usa SSE/AVX.</li>
+					<li><strong>Confundir <code>jz</code> y <code>je</code></strong> → son lo mismo, pero <code>je</code> se usa tras <code>cmp</code> y <code>jz</code> tras <code>test</code> (ambos miran ZF).</li>
+					<li><strong>Confundir <code>ja</code> (sin signo) y <code>jg</code> (con signo)</strong> → con números negativos <code>ja</code> falla.</li>
+					<li><strong>No comprobar el retorno de <code>syscall</code></strong> → asumir éxito cuando fue error.</li>
+					<li><strong>Pasar argumentos en <code>RCX</code> en syscall 64 bits</strong> → es <code>R10</code>.</li>
+					<li><strong>Olvidar <code>align 16</code> en <code>.bss</code></strong> para buffers que se pasarán a SIMD.</li>
+				</ul>
+			</fieldset>
+		</main>
+	</body>
 </html>
