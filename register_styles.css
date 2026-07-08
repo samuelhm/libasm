@@ -1,0 +1,299 @@
+/* ============================================================
+   register_styles.css — Registros x86_64 Assembly
+   Barras superpuestas, layout tabla, tema oscuro, CSS3
+   ============================================================ */
+
+:root {
+  --bg-primary:   #0d1117;
+  --bg-surface:   #161b22;
+  --border:       #30363d;
+  --text-primary: #c9d1d9;
+  --text-muted:   #8b949e;
+  --text-bright:  #f0f6fc;
+
+  --color-64:     #1f6feb;
+  --color-32:     #238636;
+  --color-16:     #9e6a03;
+  --color-8l:     #8250df;
+  --color-512:    #db61a2;
+  --color-256:    #56b4e9;
+  --color-128:    #e5c07b;
+  --color-rf:     #1f6feb;
+
+  --color-volatil:    #da3633;
+  --color-preservado: #238636;
+  --color-kernel:     #d29922;
+
+  --bit-px:       6px;
+  --bar-height:   20px;
+  --border-radius:5px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html {
+  font-family:'Segoe UI','Cascadia Code','Fira Code','Consolas',monospace;
+  font-size:22.5px; line-height:1.5;
+  color:var(--text-primary); background:var(--bg-primary);
+}
+
+body { min-height:100vh; padding:1.5rem 2rem 3rem; }
+
+#header-main { margin-bottom:2rem; }
+#title-main {
+  font-size:1.8rem; font-weight:700; color:var(--text-bright); letter-spacing:-0.02em;
+}
+#subtitle-main { font-size:0.88rem; color:var(--text-muted); margin-top:0.25rem; }
+#main-content { width:100%; }
+
+/* --- Fieldset --- */
+.register-section {
+  border:1px solid var(--border); border-radius:8px;
+  padding:1.25rem 1.5rem 1rem; margin:0 0 2rem; background:var(--bg-surface);
+}
+.register-section legend {
+  font-size:1.2rem; font-weight:700; color:var(--text-bright);
+  padding:0.25rem 0.75rem; margin-left:0.5rem;
+  background:var(--bg-surface); border:1px solid var(--border); border-radius:6px;
+}
+
+/* ============================================================
+   Tables (genéricas para cualquier section)
+   ============================================================ */
+.register-section table { width:100%; border-collapse:collapse; }
+.register-section thead th {
+  text-align:left; font-size:0.68rem; font-weight:600; color:var(--text-muted);
+  text-transform:uppercase; letter-spacing:0.05em;
+  padding:0 0.5rem 0.65rem; white-space:nowrap;
+  border-bottom:2px solid var(--border);
+}
+.register-section td {
+  padding:0.5rem 0.5rem; vertical-align:middle;
+  border-bottom:1px solid var(--border);
+  font-size:0.8rem; color:var(--text-primary); line-height:1.4;
+}
+.register-section tbody tr:last-child td { border-bottom:none; }
+.register-section td:first-child { padding-left:0; }
+
+/* ============================================================
+   Visual Register Bar — superpuestas, mismo origen (bit 0)
+   ============================================================ */
+.register-visual {
+  position:relative; height:var(--bar-height);
+  border-radius:var(--border-radius);
+}
+/* Por defecto: 64 bits */
+.register-visual:not(.vis-512):not(.vis-rf) {
+  width:calc(64*var(--bit-px));
+}
+.vis-512 { width:calc(512*var(--bit-px)); }
+.vis-rf  { width:calc(64*var(--bit-px)); }
+
+.reg-bar {
+  position:absolute; left:0; top:0; height:100%;
+  display:flex; align-items:center; justify-content:flex-end; padding:0 6px;
+  font-family:'Cascadia Code','Fira Code','Consolas',monospace;
+  font-weight:700; font-size:0.8rem; color:#fff;
+  border-radius:var(--border-radius);
+  cursor:default; user-select:none; white-space:nowrap; overflow:hidden;
+  transition:filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* GPR: 64 / 32 / 16 / 8 */
+.reg-64 { z-index:1; width:calc(64*var(--bit-px)); background:var(--color-64); }
+.reg-32 { z-index:2; width:calc(32*var(--bit-px)); background:var(--color-32); }
+.reg-16 { z-index:3; width:calc(16*var(--bit-px)); background:var(--color-16); }
+.reg-8l { z-index:4; width:calc(8 *var(--bit-px)); background:var(--color-8l);
+          font-size:0.7rem; padding:0 3px; }
+
+/* Vector: 512 / 256 / 128 */
+.reg-512 { z-index:1; width:calc(512*var(--bit-px)); background:var(--color-512); }
+.reg-256 { z-index:2; width:calc(256*var(--bit-px)); background:var(--color-256); }
+.reg-128 { z-index:3; width:calc(128*var(--bit-px)); background:var(--color-128); }
+
+/* RFLAGS bar (64-bit único, sin overlay) */
+.reg-rf { z-index:1; width:calc(64*var(--bit-px)); background:var(--color-rf); }
+
+/* ============================================================
+   Hover — sin cambiar z-index
+   ============================================================ */
+.reg-bar:hover {
+  filter:brightness(1.6);
+  box-shadow:0 0 0 2px rgba(255,255,255,0.85), 0 0 18px currentColor;
+}
+.reg-bar:hover::after {
+  content:attr(data-reg) " — " attr(data-bits) " bits";
+  position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%);
+  background:#1c2128; color:var(--text-bright); border:1px solid var(--border);
+  border-radius:4px; padding:2px 7px; font-size:0.64rem; font-weight:600;
+  white-space:nowrap; z-index:1000; pointer-events:none;
+  box-shadow:0 3px 10px rgba(0,0,0,0.6);
+}
+
+/* ============================================================
+   Flag badges — chips visibles para cada bandera de RFLAGS
+   ============================================================ */
+.flags-strip {
+  display:flex; flex-wrap:wrap; gap:4px;
+  max-width:calc(64*var(--bit-px));
+}
+.flag-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:28px; padding:2px 5px;
+  border-radius:4px; cursor:default;
+  font-family:'Cascadia Code','Fira Code','Consolas',monospace;
+  font-size:0.6rem; font-weight:700;
+  background:rgba(31,111,235,0.18); color:#58a6ff;
+  border:1px solid rgba(31,111,235,0.3);
+  transition:background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.flag-badge:hover {
+  background:rgba(31,111,235,0.4); border-color:#58a6ff;
+  box-shadow:0 0 10px rgba(31,111,235,0.4);
+}
+.flag-badge:hover::after {
+  content:attr(data-flag);
+  position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%);
+  background:#1c2128; color:var(--text-bright); border:1px solid var(--border);
+  border-radius:4px; padding:2px 7px; font-size:0.6rem; font-weight:600;
+  white-space:nowrap; z-index:1000; pointer-events:none;
+  box-shadow:0 3px 10px rgba(0,0,0,0.6);
+}
+
+/* ============================================================
+   Badges
+   ============================================================ */
+.info-preserve {
+  display:inline-flex; align-items:center; gap:0.3rem;
+  padding:0.15rem 0.55rem; border-radius:12px;
+  font-size:0.7rem; font-weight:700; letter-spacing:0.03em; white-space:nowrap;
+}
+.info-preserve::before {
+  content:""; width:7px; height:7px; border-radius:50%; flex-shrink:0;
+}
+.info-preserve.volatil {
+  background:rgba(218,54,51,0.15); color:#f85149; border:1px solid rgba(218,54,51,0.3);
+}
+.info-preserve.volatil::before { background:var(--color-volatil); }
+.info-preserve.preservado {
+  background:rgba(35,134,54,0.15); color:#3fb950; border:1px solid rgba(35,134,54,0.3);
+}
+.info-preserve.preservado::before { background:var(--color-preservado); }
+
+/* Nota / advertencia */
+.section-note {
+  display:flex; align-items:flex-start; gap:0.5rem;
+  margin-bottom:1rem; padding:0.6rem 0.8rem;
+  border:1px solid rgba(210,153,34,0.3); border-radius:6px;
+  background:rgba(210,153,34,0.08);
+  font-size:0.78rem; color:#e3b341; line-height:1.5;
+}
+.section-note::before {
+  content:"⚠"; font-size:1rem; flex-shrink:0;
+}
+
+/* --- Scoped bit-px for vector section --- */
+#section-vector            { --bit-px: 1px; }
+#section-vector .reg-bar   { font-size:0.72rem; }
+#section-vector .reg-128   { font-size:0.65rem; }
+
+/* ============================================================
+   Code blocks
+   ============================================================ */
+code {
+  font-family:'Cascadia Code','Fira Code','Consolas','Monaco',monospace;
+  font-size:0.85em;
+  background:rgba(110,118,129,0.18);
+  padding:1px 5px;
+  border-radius:3px;
+  color:#79c0ff;
+}
+pre {
+  background:#0a0e14;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:0.85rem 1rem;
+  margin:0.6rem 0 1rem;
+  overflow-x:auto;
+  font-family:'Cascadia Code','Fira Code','Consolas','Monaco',monospace;
+  font-size:0.85rem;
+  line-height:1.5;
+  color:#c9d1d9;
+}
+pre code {
+  background:none;
+  padding:0;
+  color:inherit;
+  font-size:inherit;
+  border-radius:0;
+}
+/* Resaltado manual con spans */
+.cm { color:#8b949e; font-style:italic; }  /* comentario */
+.kw { color:#ff7b72; }                       /* keyword / instrucción */
+.reg { color:#79c0ff; }                      /* registro */
+.num { color:#79c0ff; }                      /* número / dirección */
+.str { color:#a5d6ff; }                      /* string */
+.dir { color:#d2a8ff; }                      /* directiva */
+.lab { color:#ffa657; }                      /* label */
+.op  { color:#ff7b72; }                      /* operador */
+
+.nasm-note {
+  font-size:0.85em;
+  color:var(--text-muted);
+  margin:0.3rem 0 0.8rem;
+  padding-left:0.8rem;
+  border-left:3px solid var(--border);
+}
+.nasm-section {
+  margin:0.3rem 0;
+  color:var(--text-bright);
+  font-weight:600;
+}
+
+/* ============================================================
+   Leyenda
+   ============================================================ */
+#leyenda-colores {
+  display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem 1.75rem;
+  padding:0.75rem 1.25rem; border:1px solid var(--border); border-radius:8px;
+  background:var(--bg-surface); font-size:0.76rem;
+}
+#leyenda-title { font-size:0.85rem; color:var(--text-bright); font-weight:700; margin-right:0.5rem; white-space:nowrap; }
+.leyenda-item   { display:flex; align-items:center; gap:0.4rem; font-weight:600; white-space:nowrap; }
+.leyenda-swatch { width:13px; height:13px; border-radius:3px; flex-shrink:0; }
+.leyenda-swatch.c64  { background:var(--color-64); }
+.leyenda-swatch.c32  { background:var(--color-32); }
+.leyenda-swatch.c16  { background:var(--color-16); }
+.leyenda-swatch.c8l  { background:var(--color-8l); }
+.leyenda-swatch.c512 { background:var(--color-512); }
+.leyenda-swatch.c256 { background:var(--color-256); }
+.leyenda-swatch.c128 { background:var(--color-128); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width:900px) {
+  .register-section thead th, .register-section td { padding:0.4rem 0.35rem; }
+  .register-section td { font-size:0.75rem; }
+}
+@media (max-width:700px) {
+  body { padding:1rem 0.5rem 2rem; }
+  #title-main { font-size:1.3rem; }
+  .register-section { padding:0.8rem 0.4rem; }
+  .register-section legend { font-size:1rem; }
+  .register-visual { --bit-px:4px; --bar-height:24px; }
+  .reg-bar { font-size:0.7rem; }
+  .reg-8l   { font-size:0.6rem; }
+  .register-section thead th { font-size:0.6rem; padding:0 0.3rem 0.45rem; }
+  .register-section td { padding:0.35rem 0.25rem; font-size:0.7rem; }
+  .info-preserve { font-size:0.62rem; padding:0.1rem 0.4rem; }
+  #leyenda-colores { gap:0.4rem 0.8rem; padding:0.6rem 0.8rem; }
+  .vis-512, .vis-rf { width:100%; }
+}
+@media (max-width:450px) {
+  .register-visual { --bit-px:3px; --bar-height:22px; }
+  .reg-bar { font-size:0.65rem; padding:0 2px; }
+  .reg-8l  { font-size:0.55rem; padding:0 1px; }
+  .register-section td { font-size:0.68rem; }
+  .vis-512, .vis-rf { width:100%; }
+}
