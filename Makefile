@@ -5,8 +5,8 @@ FLAGS_C	= -Wall -Wextra -Werror
 FLAGS_ASM= -f elf64
 
 NAME	= libasm.a
-SRC_ASM	= program.s
-OBJ_ASM	= program.o
+SRC_ASM	= ft_strlen.s ft_strcpy.s ft_strcmp.s ft_write.s ft_read.s ft_strdup.s
+OBJ_ASM	= $(SRC_ASM:.s=.o)
 SRC_C	= main.c
 EXEC	= programa
 
@@ -17,8 +17,10 @@ all: $(EXEC)
 $(NAME): $(OBJ_ASM)
 	$(AR) rcs $(NAME) $(OBJ_ASM)
 
+%.o: %.s
+	$(ASM) $(FLAGS_ASM) $< -o $@
+
 $(OBJ_ASM): $(SRC_ASM)
-	$(ASM) $(FLAGS_ASM) $(SRC_ASM) -o $(OBJ_ASM)
 
 $(EXEC): $(NAME) $(SRC_C)
 	$(CC) $(FLAGS_C) $(SRC_C) -L. -lasm -o $(EXEC)
