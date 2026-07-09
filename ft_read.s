@@ -17,7 +17,7 @@ ft_read:
 	push	rdi							;guardamos rdi porque al ser volatil no sabemos si errno_location lo borra.
 	call	__errno_location wrt ..plt
 	pop		rdi
-	mov		[rax], rdi
+	mov		[rax], edi
 	mov		rax, -1
 	ret
 

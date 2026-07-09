@@ -15,6 +15,4 @@ ft_strlen:
 .fin:
 	ret
 
-stdout		equ 1
-
 section .note.GNU-stack noalloc noexec nowrite progbits
